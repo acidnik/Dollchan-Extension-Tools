@@ -55,7 +55,7 @@ function scriptCSS() {
 	][Cfg.scriptStyle] }
 	.de-donate-logo { background: linear-gradient(to bottom, #7b849b, #616b86 8%, #121212 60%, #1f2740 100%) }
 	.de-panel-svg:hover { margin: -2px; width: 29px; height: 29px; color: #d0e7ff !important; }
-	.de-panel-btn:hover { background-color: rgba(255,255,255,.15) !important; box-shadow: 0 0 3px rgba(200,200,200,0.5); color: inherit !important; }\r\n`;
+	.de-panel-btn:hover { background-color: rgba(255,255,255,.15) !important; box-shadow: 0 0 3px rgba(200,200,200,0.5); color: inherit !important; }\n`;
 
 	if(Cfg.disabled) {
 		$css(x).id = 'de-css';
@@ -198,7 +198,7 @@ function scriptCSS() {
 	#de-txt-panel { display: block; font-weight: bold; white-space: nowrap; cursor: pointer; }
 	#de-txt-panel > div { display: inline-block; padding: 0; }
 	#de-txt-panel > div > button { margin-right: 2px; min-width: 23px; }
-	#de-txt-panel > div > svg { width: 23px; height: 22px; margin: 0 1px; }\r\n`;
+	#de-txt-panel > div > svg { width: 23px; height: 22px; margin: 0 1px; }\n`;
 
 	if('animation' in doc.body.style) {
 		x += `
@@ -227,7 +227,7 @@ function scriptCSS() {
 		.de-blink { animation: de-blink .7s ease-in-out both; }
 		.de-post-new { animation: de-post-new .2s ease-out both; }
 		.de-win-anim-open { animation: de-win-open .2s ease-out backwards; }
-		.de-win-anim-close { animation: de-win-close .2s ease-in both; }\r\n`;
+		.de-win-anim-close { animation: de-win-close .2s ease-in both; }\n`;
 	} else {
 		Cfg.animation = 0;
 	}
@@ -326,6 +326,18 @@ function scriptCSS() {
 		width: min(100%, max(500px, 70%));
 		box-sizing: border-box;
 	}
+	/* Under a post the form is moved into the board's own reply box, and the board pins that box to
+	   fit-content with !important (endchan), so the form inside measured itself against a collapsed
+	   parent and fell back to its 500px floor. The box takes the form's width instead, and the form fills
+	   the box, so the form comes out the same width in both places. Our marker class is what outranks the
+	   board's rule: dE itself asks for width: auto !important on that box. */
+	#de-win-reply.de-win-inpost.de-altreply {
+		width: 70% !important;
+		max-width: 100%;
+		width: min(100%, max(500px, 70%)) !important;
+		box-sizing: border-box;
+	}
+	#de-win-reply.de-win-inpost.de-altreply .de-altform-form { width: 100%; }
 	.de-altform { width: 100%; border-collapse: collapse; }
 	.de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
 	.de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
@@ -498,8 +510,8 @@ function updateCSS() {
 	${ Cfg.fileInputs ? '' : '.de-file-txt-wrap, .de-file-btn-txt, ' }
 	${ !aib.formHeaders && (aib.multiFile || Cfg.fileInputs !== 2) ?
 		'#de-pform form > table > tbody > tr > td:not([colspan]):first-child, #de-pform form table > tbody > tr > th:first-child, ' : '' }
-	.postarea, .postarea + hr, .postarea + * + hr, .theader { display: none !important; }\r\n`;
-	$id('de-css-dynamic').textContent = (x + aib.css).replace(/[\r\n\t]+/g, '\r\n\t');
+	.postarea, .postarea + hr, .postarea + * + hr, .theader { display: none !important; }\n`;
+	$id('de-css-dynamic').textContent = (x + aib.css).replace(/[\n\r\t]+/g, '\n\t');
 	$id('de-css-user').textContent = Cfg.userCSS ? Cfg.userCSSTxt : '';
 }
 

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.5
+// @version         24.9.16.6
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -27,8 +27,8 @@
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.5';
-const commit = '7269568';
+const version = '24.9.16.6';
+const commit = 'e856273';
 
 /* ==[ GlobalVars.js ]== */
 
@@ -825,9 +825,9 @@ const Lng = {
 			'NSFW mode',
 			'Режим NSFW'],
 		preimg: [
-			'Предзагрузить картинки\r\n([Ctrl+Click] только для новых постов)',
-			'Preload images\r\n([Ctrl+Click] for new posts only)',
-			'Наперед завантажити зображення\r\n([Ctrl+Click] лише для нових дописів)'],
+			'Предзагрузить картинки\n([Ctrl+Click] только для новых постов)',
+			'Preload images\n([Ctrl+Click] for new posts only)',
+			'Наперед завантажити зображення\n([Ctrl+Click] лише для нових дописів)'],
 		savethr: [
 			'Сохранить на диск',
 			'Save to disk',
@@ -1186,11 +1186,11 @@ const Lng = {
 		['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 		['Нед', 'Пон', 'Вів', 'Сер', 'Чет', 'Птн', 'Сбт']],
 	monthDict: {
-		/* eslint-disable max-len, object-property-newline */
+		/* eslint-disable object-property-newline */
 		янв: 0, фев: 1, мар: 2, апр: 3, май: 4, мая: 4, июн: 5, июл: 6, авг: 7, сен: 8, окт: 9, ноя: 10, дек: 11,
 		jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
 		січ: 0, лют: 1, бер: 2, кві: 3, тра: 4, чер: 5, лип: 6, сер: 7, вер: 8, жов: 9, лис: 10, гру: 11
-		/* eslint-enable max-len, object-property-newline */
+		/* eslint-enable object-property-newline */
 	},
 
 	// Spells: popups
@@ -1465,9 +1465,9 @@ const Lng = {
 		'Drop file(s) or link here',
 		'Киньте сюди файл(и) чи посилання'],
 	youCanDrag: [
-		'Можно перетаскивать картинки и ссылки на файлы\r\nпрямо со страницы или других сайтов',
-		'You can drag images and file links\r\ndirectly from the page or other sites',
-		'Можна перетягувати зображення чи посилання на файли\r\nбезпосередньо зі сторінки чи інших сайтів'],
+		'Можно перетаскивать картинки и ссылки на файлы\nпрямо со страницы или других сайтов',
+		'You can drag images and file links\ndirectly from the page or other sites',
+		'Можна перетягувати зображення чи посилання на файли\nбезпосередньо зі сторінки чи інших сайтів'],
 	removeFile: [
 		'Удалить файл',
 		'Remove file',
@@ -9295,6 +9295,9 @@ class PostForm {
 	// captcha.parentEl) are pointed at those cells, so their own logic keeps working on the rebuilt form.
 	_applyAltLayout() {
 		const { form, txta, subm, name, subj, mail, passw, video, files, captcha } = this;
+		// The quick reply box is the board's own element, and endchan pins it to fit-content with
+		// !important; our marker class outranks that rule, so the form keeps its width under a post too.
+		this.qArea.classList.add('de-altreply');
 		const isTable = !!txta.closest('tr');
 		const mk = (tag, cls) => {
 			const el = doc.createElement(tag);
@@ -16478,10 +16481,12 @@ function getImageBoard(checkDomains, checkEngines) {
 			return +$q('.deletionCheckBox', thr).name.split('-')[1];
 		}
 		init() {
-			$script(`if("autoRefresh" in window) {
+			// The board declares these globals before it fills them in, so "x in window" alone is not
+			// enough: thread can be there and be undefined, and then reading thread.refreshTimer throws.
+			$script(`if("autoRefresh" in window && refreshTimer) {
 					clearInterval(refreshTimer);
 				}
-				if("thread" in window) {
+				if(thread) {
 					if(thread.refreshTimer) {
 						clearInterval(thread.refreshTimer);
 						Object.defineProperty(thread, "startTimer",
@@ -17937,7 +17942,7 @@ function getImageBoard(checkDomains, checkEngines) {
 			this.markupBB = true;
 		}
 		get css() {
-			return super.css + (this.t ? '' : '\r\n.de-btn-reply { display: none !important; }');
+			return super.css + (this.t ? '' : '\n.de-btn-reply { display: none !important; }');
 		}
 		get markupTags() {
 			return ['b', 'i', 'u', 's', 'spoiler', 'code'];
@@ -18245,7 +18250,7 @@ async function checkForUpdates(isManual, lastUpdateTime) {
 	await CfgSaver.saveObj('lastUpd', () => Date.now());
 	const link = `<a style="color: blue; font-weight: bold;" href="${ src }">`;
 	const chLogLink = `<a target="_blank" href="${ gitWiki }${
-		lang === 1 ? 'versions-en' : 'versions' }">\r\n${ Lng.changeLog[lang] }<a>`;
+		lang === 1 ? 'versions-en' : 'versions' }">\n${ Lng.changeLog[lang] }<a>`;
 	for(let i = 0, len = Math.max(currentVer.length, remoteVer.length); i < len; ++i) {
 		if((+remoteVer[i] || 0) > (+currentVer[i] || 0)) {
 			return `${ link }${ Lng.updAvail[lang].replace('%s', v[1]) }</a>${ chLogLink }`;
@@ -18257,7 +18262,7 @@ async function checkForUpdates(isManual, lastUpdateTime) {
 		const c = responseText.match(/const commit = '([0-9abcdef]+)';/)[1];
 		const vc = version + '.' + c;
 		return c === commit ? Lng.haveLatestCommit[lang].replace('%s', vc) :
-			`${ Lng.haveLatestStable[lang].replace('%s', version) }\r\n${
+			`${ Lng.haveLatestStable[lang].replace('%s', version) }\n${
 				Lng.newCommitsAvail[lang].replace('%s', `${ link }${ vc }</a>${ chLogLink }`) }`;
 	}
 	throw new Error();
@@ -18640,7 +18645,7 @@ function scriptCSS() {
 	][Cfg.scriptStyle] }
 	.de-donate-logo { background: linear-gradient(to bottom, #7b849b, #616b86 8%, #121212 60%, #1f2740 100%) }
 	.de-panel-svg:hover { margin: -2px; width: 29px; height: 29px; color: #d0e7ff !important; }
-	.de-panel-btn:hover { background-color: rgba(255,255,255,.15) !important; box-shadow: 0 0 3px rgba(200,200,200,0.5); color: inherit !important; }\r\n`;
+	.de-panel-btn:hover { background-color: rgba(255,255,255,.15) !important; box-shadow: 0 0 3px rgba(200,200,200,0.5); color: inherit !important; }\n`;
 
 	if(Cfg.disabled) {
 		$css(x).id = 'de-css';
@@ -18783,7 +18788,7 @@ function scriptCSS() {
 	#de-txt-panel { display: block; font-weight: bold; white-space: nowrap; cursor: pointer; }
 	#de-txt-panel > div { display: inline-block; padding: 0; }
 	#de-txt-panel > div > button { margin-right: 2px; min-width: 23px; }
-	#de-txt-panel > div > svg { width: 23px; height: 22px; margin: 0 1px; }\r\n`;
+	#de-txt-panel > div > svg { width: 23px; height: 22px; margin: 0 1px; }\n`;
 
 	if('animation' in doc.body.style) {
 		x += `
@@ -18812,7 +18817,7 @@ function scriptCSS() {
 		.de-blink { animation: de-blink .7s ease-in-out both; }
 		.de-post-new { animation: de-post-new .2s ease-out both; }
 		.de-win-anim-open { animation: de-win-open .2s ease-out backwards; }
-		.de-win-anim-close { animation: de-win-close .2s ease-in both; }\r\n`;
+		.de-win-anim-close { animation: de-win-close .2s ease-in both; }\n`;
 	} else {
 		Cfg.animation = 0;
 	}
@@ -18911,6 +18916,18 @@ function scriptCSS() {
 		width: min(100%, max(500px, 70%));
 		box-sizing: border-box;
 	}
+	/* Under a post the form is moved into the board's own reply box, and the board pins that box to
+	   fit-content with !important (endchan), so the form inside measured itself against a collapsed
+	   parent and fell back to its 500px floor. The box takes the form's width instead, and the form fills
+	   the box, so the form comes out the same width in both places. Our marker class is what outranks the
+	   board's rule: dE itself asks for width: auto !important on that box. */
+	#de-win-reply.de-win-inpost.de-altreply {
+		width: 70% !important;
+		max-width: 100%;
+		width: min(100%, max(500px, 70%)) !important;
+		box-sizing: border-box;
+	}
+	#de-win-reply.de-win-inpost.de-altreply .de-altform-form { width: 100%; }
 	.de-altform { width: 100%; border-collapse: collapse; }
 	.de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
 	.de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
@@ -19083,8 +19100,8 @@ function updateCSS() {
 	${ Cfg.fileInputs ? '' : '.de-file-txt-wrap, .de-file-btn-txt, ' }
 	${ !aib.formHeaders && (aib.multiFile || Cfg.fileInputs !== 2) ?
 		'#de-pform form > table > tbody > tr > td:not([colspan]):first-child, #de-pform form table > tbody > tr > th:first-child, ' : '' }
-	.postarea, .postarea + hr, .postarea + * + hr, .theader { display: none !important; }\r\n`;
-	$id('de-css-dynamic').textContent = (x + aib.css).replace(/[\r\n\t]+/g, '\r\n\t');
+	.postarea, .postarea + hr, .postarea + * + hr, .theader { display: none !important; }\n`;
+	$id('de-css-dynamic').textContent = (x + aib.css).replace(/[\n\r\t]+/g, '\n\t');
 	$id('de-css-user').textContent = Cfg.userCSS ? Cfg.userCSSTxt : '';
 }
 

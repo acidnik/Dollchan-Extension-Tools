@@ -1,3 +1,7 @@
+# Line endings: the build, the served bundle and every source file are LF. This also keeps a
+# Windows checkout from turning the repository files into CRLF again.
+* text=auto eol=lf
+
 # Exclude generated files from diff
 
 Dollchan_Extension_Tools.user.js -diff

@@ -82,8 +82,13 @@ gulp.task('make:es6', gulp.series('updatecommit', () =>
 				.pipe(tap(moduleFile => {
 					str = str.replace(arr[i], moduleFile.contents.toString());
 					if(++count === len) {
-						newfile('src/Dollchan_Extension_Tools.es6.user.js', `\r\n${ str }`)
+						newfile('src/Dollchan_Extension_Tools.es6.user.js', `\n${ str }`)
 							.pipe(streamify(headerfooter.header('Dollchan_Extension_Tools.meta.js')))
+							// One line ending only: the bundle goes from GitHub straight into a browser, and a CRLF
+							// from a Windows checkout is what makes the installed file look broken there.
+							.pipe(tap(file => {
+								file.contents = Buffer.from(file.contents.toString().replace(/\r\n/g, '\n'));
+							}))
 							.pipe(gulp.dest('.'));
 					}
 				}));
@@ -116,13 +121,16 @@ gulp.task('make', gulp.series('make:es5'));
 
 // Split es6-script into separate module files
 gulp.task('make:modules', () => gulp.src('src/Dollchan_Extension_Tools.es6.user.js').pipe(tap(file => {
-	const arr = file.contents.toString().split('// ==/UserScript==\r\n\r\n')[1].split('/* ==[ ');
-	let wrapStr = `${ arr[0].slice(0, -2) }\r\n`;
+	// A CRLF bundle is normalized rather than assumed: splitting on \r\n alone found no marker in an LF
+	// bundle, and the next line threw on undefined.
+	const bundle = file.contents.toString().replace(/\r\n/g, '\n');
+	const arr = bundle.split('// ==/UserScript==\n\n')[1].split('/* ==[ ');
+	let wrapStr = `${ arr[0].slice(0, -1) }\n`;
 	for(let i = 1, len = arr.length; i < len; ++i) {
 		let str = arr[i];
 		if(i !== len - 1) {
-			str = str.slice(0, -2); // Remove last \r\n
-			wrapStr += `/* ==[ ${ str.split(' ]==')[0] } ]== */\r\n`;
+			str = str.slice(0, -1); // Remove last \n
+			wrapStr += `/* ==[ ${ str.split(' ]==')[0] } ]== */\n`;
 		} else {
 			wrapStr += `/* ==[ ${ str }`;
 			break;

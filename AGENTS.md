@@ -21,9 +21,10 @@ Wakaba/Kusaba/Tinyboard/Vichan/TinyIB/LynxChan/FoolFuuka).
 
 Always edit `src/modules/*.js` (or `src/es5-polyfills.js`, `Dollchan_Extension_Tools.meta.js`) and rebuild.
 
-The artifacts are committed exactly as the local build writes them, and their line endings follow the
-checkout: upstream builds from a CRLF checkout, while on Linux the modules are LF, so a bundle ends up
-mostly LF with a CRLF first line (the gulpfile's `make:es6` writes a leading `\r\n`). Their diffs are
+The artifacts are committed exactly as the local build writes them: `make:es6` normalizes them to LF, so the
+bundle is byte-identical whether the checkout is LF (Linux) or CRLF (Windows, upstream's case). Upstream
+instead writes `\r\n` before the body (commit `668eebe4`, "Add new line"), which on a Linux checkout left
+a single CRLF among LF breaks. Their diffs are
 binary-marked in `.gitattributes`, so this churn is invisible in review — **do not hand-normalize them**,
 the next `make` undoes it. Compare them with `diff <(git show HEAD:<file> | tr -d '\r') <(tr -d '\r' < <file>)`
 to see the real change.
@@ -106,7 +107,7 @@ Consequences when writing code:
 
 Style is defined by `eslint.config.mjs` (flat config; ESLint 10). There is no CI lint job and no test suite.
 
-- **Tabs** for indentation; `max-len` 110; no trailing whitespace; `semi` always; single quotes.
+- **Tabs** for indentation; `max-len` 120; no trailing whitespace; `semi` always; single quotes.
 - **No space after** `if`, `for`, `while`, `switch`, `catch` → `if(x) {`, `for(let i = 0; …)`, `catch(err) {`.
 - **Never a space before** the parenthesis of named/anonymous functions (`function foo(a) {`), but always
   for async arrows: `async (a) => {}`.
@@ -120,8 +121,9 @@ Style is defined by `eslint.config.mjs` (flat config; ESLint 10). There is no CI
   `nav` for browser capabilities (from `initBrowser()` in `Browser.js`).
 - `.eslintrc.json` inside `src/modules/` disables `no-undef`/`no-unused-vars` for the concatenated scope.
   Be aware flat config does **not** read eslintrc files, so `npx eslint` on this repo reports many
-  pre-existing errors (including `linebreak-style`): treat lint as a style reference, not a clean gate,
-  and match the surrounding code.
+  pre-existing errors (`no-undef`, `no-unused-vars`): treat lint as a style reference, not a clean gate,
+  and match the surrounding code. `linebreak-style` is `unix` here: the repository, the build and the
+  served bundle are LF only.
 
 ## Localization
 
@@ -265,8 +267,8 @@ Do not stage, commit, or push unless the current user message explicitly asks fo
   `BUNDLE=/tmp/old.js node tools/…`, where the old bundle comes from `git show HEAD:<artifact>` — and put
   the before/after pair in the report or the commit message. A check that cannot fail proves nothing.
 - **Compare lint against HEAD**: `git stash && npx eslint <file>; git stash pop`. The repo has
-  pre-existing errors (`Css.js`, `WindowSettings.js`, plus `linebreak-style` everywhere), so the only
-  question worth answering is whether your change adds to them.
+  pre-existing errors (`Css.js`, `WindowSettings.js`), so the only question worth answering is whether
+  your change adds to them.
 - **Test assets must be real.** A hand-written base64 PNG that Chromium cannot decode turned a whole
   verification into a no-op: build such files in the page (`canvas.toBlob`) instead.
 - Count requests with `page.on('request')`, not inside a route handler: a request that bypasses the route

@@ -89,7 +89,7 @@ async function checkForUpdates(isManual, lastUpdateTime) {
 	await CfgSaver.saveObj('lastUpd', () => Date.now());
 	const link = `<a style="color: blue; font-weight: bold;" href="${ src }">`;
 	const chLogLink = `<a target="_blank" href="${ gitWiki }${
-		lang === 1 ? 'versions-en' : 'versions' }">\r\n${ Lng.changeLog[lang] }<a>`;
+		lang === 1 ? 'versions-en' : 'versions' }">\n${ Lng.changeLog[lang] }<a>`;
 	for(let i = 0, len = Math.max(currentVer.length, remoteVer.length); i < len; ++i) {
 		if((+remoteVer[i] || 0) > (+currentVer[i] || 0)) {
 			return `${ link }${ Lng.updAvail[lang].replace('%s', v[1]) }</a>${ chLogLink }`;
@@ -101,7 +101,7 @@ async function checkForUpdates(isManual, lastUpdateTime) {
 		const c = responseText.match(/const commit = '([0-9abcdef]+)';/)[1];
 		const vc = version + '.' + c;
 		return c === commit ? Lng.haveLatestCommit[lang].replace('%s', vc) :
-			`${ Lng.haveLatestStable[lang].replace('%s', version) }\r\n${
+			`${ Lng.haveLatestStable[lang].replace('%s', version) }\n${
 				Lng.newCommitsAvail[lang].replace('%s', `${ link }${ vc }</a>${ chLogLink }`) }`;
 	}
 	throw new Error();

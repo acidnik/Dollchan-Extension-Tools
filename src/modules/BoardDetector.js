@@ -361,10 +361,12 @@ function getImageBoard(checkDomains, checkEngines) {
 			return +$q('.deletionCheckBox', thr).name.split('-')[1];
 		}
 		init() {
-			$script(`if("autoRefresh" in window) {
+			// The board declares these globals before it fills them in, so "x in window" alone is not
+			// enough: thread can be there and be undefined, and then reading thread.refreshTimer throws.
+			$script(`if("autoRefresh" in window && refreshTimer) {
 					clearInterval(refreshTimer);
 				}
-				if("thread" in window) {
+				if(thread) {
 					if(thread.refreshTimer) {
 						clearInterval(thread.refreshTimer);
 						Object.defineProperty(thread, "startTimer",
@@ -1820,7 +1822,7 @@ function getImageBoard(checkDomains, checkEngines) {
 			this.markupBB = true;
 		}
 		get css() {
-			return super.css + (this.t ? '' : '\r\n.de-btn-reply { display: none !important; }');
+			return super.css + (this.t ? '' : '\n.de-btn-reply { display: none !important; }');
 		}
 		get markupTags() {
 			return ['b', 'i', 'u', 's', 'spoiler', 'code'];

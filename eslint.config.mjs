@@ -38,8 +38,8 @@ export default defineConfig([{
 				'while': { 'after': false }
 			}
 		}],
-		'linebreak-style': ['error', 'windows'],
-		'max-len': ['error', 110, { 'ignoreRegExpLiterals': true, 'ignoreUrls': true }],
+		'linebreak-style': ['error', 'unix'],
+		'max-len': ['error', 120, { 'ignoreRegExpLiterals': true, 'ignoreUrls': true }],
 		'new-cap': ['error', {
 			'capIsNewExceptions': [
 				'GM_getValue',

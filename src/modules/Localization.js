@@ -627,9 +627,9 @@ const Lng = {
 			'NSFW mode',
 			'Режим NSFW'],
 		preimg: [
-			'Предзагрузить картинки\r\n([Ctrl+Click] только для новых постов)',
-			'Preload images\r\n([Ctrl+Click] for new posts only)',
-			'Наперед завантажити зображення\r\n([Ctrl+Click] лише для нових дописів)'],
+			'Предзагрузить картинки\n([Ctrl+Click] только для новых постов)',
+			'Preload images\n([Ctrl+Click] for new posts only)',
+			'Наперед завантажити зображення\n([Ctrl+Click] лише для нових дописів)'],
 		savethr: [
 			'Сохранить на диск',
 			'Save to disk',
@@ -988,11 +988,11 @@ const Lng = {
 		['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 		['Нед', 'Пон', 'Вів', 'Сер', 'Чет', 'Птн', 'Сбт']],
 	monthDict: {
-		/* eslint-disable max-len, object-property-newline */
+		/* eslint-disable object-property-newline */
 		янв: 0, фев: 1, мар: 2, апр: 3, май: 4, мая: 4, июн: 5, июл: 6, авг: 7, сен: 8, окт: 9, ноя: 10, дек: 11,
 		jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
 		січ: 0, лют: 1, бер: 2, кві: 3, тра: 4, чер: 5, лип: 6, сер: 7, вер: 8, жов: 9, лис: 10, гру: 11
-		/* eslint-enable max-len, object-property-newline */
+		/* eslint-enable object-property-newline */
 	},
 
 	// Spells: popups
@@ -1267,9 +1267,9 @@ const Lng = {
 		'Drop file(s) or link here',
 		'Киньте сюди файл(и) чи посилання'],
 	youCanDrag: [
-		'Можно перетаскивать картинки и ссылки на файлы\r\nпрямо со страницы или других сайтов',
-		'You can drag images and file links\r\ndirectly from the page or other sites',
-		'Можна перетягувати зображення чи посилання на файли\r\nбезпосередньо зі сторінки чи інших сайтів'],
+		'Можно перетаскивать картинки и ссылки на файлы\nпрямо со страницы или других сайтов',
+		'You can drag images and file links\ndirectly from the page or other sites',
+		'Можна перетягувати зображення чи посилання на файли\nбезпосередньо зі сторінки чи інших сайтів'],
 	removeFile: [
 		'Удалить файл',
 		'Remove file',

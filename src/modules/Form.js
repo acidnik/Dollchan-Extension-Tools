@@ -594,6 +594,9 @@ class PostForm {
 	// captcha.parentEl) are pointed at those cells, so their own logic keeps working on the rebuilt form.
 	_applyAltLayout() {
 		const { form, txta, subm, name, subj, mail, passw, video, files, captcha } = this;
+		// The quick reply box is the board's own element, and endchan pins it to fit-content with
+		// !important; our marker class outranks that rule, so the form keeps its width under a post too.
+		this.qArea.classList.add('de-altreply');
 		const isTable = !!txta.closest('tr');
 		const mk = (tag, cls) => {
 			const el = doc.createElement(tag);
