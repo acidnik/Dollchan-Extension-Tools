@@ -1,53 +1,53 @@
 {
-	"name": "Dollchan-Extension-Tools",
-	"version": "24.9.16",
-	"author": "SthephanShi",
-	"description": "Doing some profit for imageboards",
-	"homepage": "https://dollchan.net/",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/acidnik/Dollchan-Extension-Tools.git"
-	},
-	"scripts": {
-		"start:firefox": "web-ext run --source-dir ./extension/v2"
-	},
-	"bugs": {
-		"url": "https://github.com/acidnik/Dollchan-Extension-Tools/issues"
-	},
-	"babel": {
-		"compact": false,
-		"presets": [
-			"@babel/preset-env"
-		],
-		"plugins": [
-			[
-				"@babel/plugin-transform-for-of",
-				{
-					"loose": true
-				}
-			]
-		]
-	},
-	"devDependencies": {
-		"@babel/core": "^7.29.0",
-		"@babel/preset-env": "^7.29.0",
-		"@eslint/js": "^10.0.1",
-		"babelify": "^10.0.0",
-		"browserify": "^17.0.1",
-		"core-js": "^3.48.0",
-		"element-closest-polyfill": "^1.0.7",
-		"element-polyfill": "^1.1.0",
-		"eslint": "^10.0.0",
-		"globals": "^17.3.0",
-		"gulp": "^5.0.1",
-		"gulp-file": "^0.4.0",
-		"gulp-headerfooter": "^1.0.3",
-		"gulp-replace": "^1.1.4",
-		"gulp-streamify": "^1.0.2",
-		"gulp-strip-comments": "^2.6.0",
-		"gulp-tap": "^2.0.0",
-		"regenerator-runtime": "^0.14.1",
-		"vinyl-source-stream": "^2.0.0"
-	}
+    "name": "Dollchan-Extension-Tools",
+    "version": "24.9.16",
+    "author": "SthephanShi",
+    "description": "Doing some profit for imageboards",
+    "homepage": "https://dollchan.net/",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/acidnik/Dollchan-Extension-Tools.git"
+    },
+    "scripts": {
+        "start:firefox": "web-ext run --source-dir ./extension/v2"
+    },
+    "bugs": {
+        "url": "https://github.com/acidnik/Dollchan-Extension-Tools/issues"
+    },
+    "babel": {
+        "compact": false,
+        "presets": [
+            "@babel/preset-env"
+        ],
+        "plugins": [
+            [
+                "@babel/plugin-transform-for-of",
+                {
+                    "loose": true
+                }
+            ]
+        ]
+    },
+    "devDependencies": {
+        "@babel/core": "^7.29.0",
+        "@babel/preset-env": "^7.29.0",
+        "@eslint/js": "^10.0.1",
+        "babelify": "^10.0.0",
+        "browserify": "^17.0.1",
+        "core-js": "^3.48.0",
+        "element-closest-polyfill": "^1.0.7",
+        "element-polyfill": "^1.1.0",
+        "eslint": "^10.0.0",
+        "globals": "^17.3.0",
+        "gulp": "^5.0.1",
+        "gulp-file": "^0.4.0",
+        "gulp-headerfooter": "^1.0.3",
+        "gulp-replace": "^1.1.4",
+        "gulp-streamify": "^1.0.2",
+        "gulp-strip-comments": "^2.6.0",
+        "gulp-tap": "^2.0.0",
+        "regenerator-runtime": "^0.14.1",
+        "vinyl-source-stream": "^2.0.0"
+    }
 }

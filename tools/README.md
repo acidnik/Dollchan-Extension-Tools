@@ -12,6 +12,7 @@ tools/
   probe-newpost.mjs        # simulate a post arriving through the thread updater
   probe-reply-refresh.mjs  # send a reply to a board that shows it with a lag, see if it appears by itself
   probe-ext/               # 15-line MV3 extension used by the probe (content script = isolated world)
+  sync-upstream.mjs        # merge upstream into this fork without fighting its tabs (not a browser script)
 ```
 
 ## Prerequisites
@@ -222,3 +223,37 @@ Traps found while building it:
 
 See the "Finding your way around (debugging)" and "Reproducing a board bug in a real browser" sections of
 the repository `AGENTS.md` for where to look in the source once you have a repro.
+
+## sync-upstream.mjs — merging upstream into this fork
+
+The one tool here that does not drive a browser. It merges
+`SthephanShinkufag/Dollchan-Extension-Tools` into the fork without fighting whitespace:
+
+```sh
+node tools/sync-upstream.mjs              # fetch upstream/master, convert, merge --no-commit
+node tools/sync-upstream.mjs --dry-run    # stop before the merge; inspect, then rerun without it
+node tools/sync-upstream.mjs --url <path-or-url> --branch <name>
+```
+
+Why it exists: upstream indents with tabs and this fork with 4 spaces, so a plain merge conflicts on every
+line either side ever touched. The script first lands upstream's tree in the fork's convention on the
+throwaway branch `de-upstream-merge`, then merges that branch with `-X ignore-space-change`. What is left to
+resolve is real code.
+
+What it does and what it deliberately does not touch:
+
+- rewrites `^\t+` → 4 spaces in every tracked text file except `package-lock.json` (npm owns that one);
+- keeps the fork's copy of the generated artifacts (`Dollchan_Extension_Tools.user.js`,
+  `src/Dollchan_Extension_Tools.es6.user.js`, both `extension/*` copies) whether they conflicted or merged
+  cleanly — a merged generated file means nothing, and `gulp make` rewrites it from the merged modules;
+- never commits to your branch. The merge is left staged for review, and the exit code says what is left:
+  `0` staged and clean, `3` conflicts need you, `1` error.
+
+After it: resolve the listed conflicts, `npx gulp bump && npx gulp make`, lint the bundle
+(`npx eslint src/Dollchan_Extension_Tools.es6.user.js` — it has to be 0 problems), test, then commit.
+
+Two things a merge can bring back, and lint is what catches both:
+
+- the first line of `src/modules/Wrap.js` is an inline eslint config that ships inside the bundle: it must
+  stay `indent: ["error", 4, …]`. Taking upstream's line (`"tab"`) makes the bundle fail its own config.
+- a line that crosses `max-len` 120 only after its tabs became four spaces each.

@@ -107,7 +107,8 @@ Consequences when writing code:
 
 Style is defined by `eslint.config.mjs` (flat config; ESLint 10). There is no CI lint job and no test suite.
 
-- **Tabs** for indentation; `max-len` 120; no trailing whitespace; `semi` always; single quotes.
+- **4 spaces** for indentation, tabs are banned (`no-tabs`); `max-len` 120; no trailing whitespace;
+  `semi` always; single quotes.
 - **No space after** `if`, `for`, `while`, `switch`, `catch` → `if(x) {`, `for(let i = 0; …)`, `catch(err) {`.
 - **Never a space before** the parenthesis of named/anonymous functions (`function foo(a) {`), but always
   for async arrows: `async (a) => {}`.
@@ -245,6 +246,11 @@ There is no automated test suite; verification is manual in a real browser.
 
 Do not stage, commit, or push unless the current user message explicitly asks for it ("commit", "push",
 "deploy"/"деплой"). `gulp make` dirtying `Wrap.js` and regenerating the artifacts is not permission to commit.
+
+The repository is LF only and indents with 4 spaces; upstream is CRLF with tabs, and that difference is what
+`tools/sync-upstream.mjs` exists to absorb — it lands upstream's tree in this fork's convention, then merges
+with `-X ignore-space-change`. After any upstream merge the bundle must still lint clean:
+`npx eslint src/Dollchan_Extension_Tools.es6.user.js` is what catches upstream's tabs coming back.
 
 ## Starting a fresh session here
 

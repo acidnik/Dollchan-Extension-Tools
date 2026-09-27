@@ -1,10 +1,10 @@
-/* eslint indent: ["error", "tab", { "flatTernaryExpressions": true, "outerIIFEBody": 0 }] */
+/* eslint indent: ["error", 4, { "flatTernaryExpressions": true, "outerIIFEBody": 0 }] */
 
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.6';
-const commit = 'e856273';
+const version = '24.9.16.8';
+const commit = '226520c';
 
 /* ==[ GlobalVars.js ]== */
 /* ==[ DefaultCfg.js ]== */
@@ -45,8 +45,8 @@ const commit = 'e856273';
 /* ==[ Main.js ]== */
 /* ==[ Tail ]== */
 }(
-	window,
-	window.FormData,
-	(x, y) => window.scrollTo(x, y),
-	/* global localData */ typeof localData === 'object' ? localData : null
+    window,
+    window.FormData,
+    (x, y) => window.scrollTo(x, y),
+    /* global localData */ typeof localData === 'object' ? localData : null
 ));
