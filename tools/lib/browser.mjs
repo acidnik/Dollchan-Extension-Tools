@@ -61,9 +61,13 @@ function byRevision(a, b) {
 }
 
 export function launchOptions(extra = {}) {
+	const { args = [], ...rest } = extra;
 	return {
 		executablePath: findChromiumBinary(),
 		headless      : process.env.HEADLESS !== '0',
-		...extra
+		// Playwright cannot intercept a response the browser takes from its HTTP cache, so a harness that
+		// rewrites responses silently stops working on a repeated URL (see probe-newpost.mjs)
+		args          : ['--disable-http-cache', ...args],
+		...rest
 	};
 }

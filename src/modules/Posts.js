@@ -2,6 +2,10 @@
                                                     POSTS
 =========================================================================================================== */
 
+// Rules created by the "Hide similar text" post menu item, keyed by the number of the post the rule was
+// taken from. New posts are checked against them in Thread._addPost.
+const similarTextRules = new Map();
+
 class AbstractPost {
 	constructor(thr, num, isOp) {
 		this.isOp = isOp;
@@ -484,6 +488,11 @@ class AbstractPost {
 			for(let post = Thread.first.op; post; post = post.next) {
 				Post.findSameText(num, !isHide, words, post);
 			}
+			if(isHide) {
+				Post.addSimilarTextRule(num, words);
+			} else {
+				Post.delSimilarTextRules(words);
+			}
 			return;
 		}
 		case 'hide-notext': await Spells.addSpell(0x10B /* (#all & !#tlen) */, '', true); return;
@@ -606,28 +615,7 @@ class Post extends AbstractPost {
 				'<svg class="de-btn-fav"><use xlink:href="#de-symbol-post-fav"/></svg>' : '');
 	}
 	static findSameText(pNum, isHidden, words, curPost) {
-		const curWords = Post.getWrds(curPost.text);
-		const len = curWords.length;
-		let i = words.length;
-		const olen = i;
-		let _olen = i;
-		let n = 0;
-		if(len < olen * 0.4 || len > olen * 3) {
-			return;
-		}
-		while(i--) {
-			if(olen > 6 && words[i].length < 3) {
-				_olen--;
-				continue;
-			}
-			let j = len;
-			while(j--) {
-				if(curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
-					n++;
-				}
-			}
-		}
-		if(n < _olen * 0.4 || len > _olen * 3) {
+		if(!Post.isSimilarWords(words, Post.getWrds(curPost.text))) {
 			return;
 		}
 		if(isHidden) {
@@ -644,6 +632,57 @@ class Post extends AbstractPost {
 			curPost.setUserVisib(true, true, 'similar to >>' + pNum);
 		}
 		return false;
+	}
+	// Compares word lists of two posts. `words` is the reference (the post the user clicked), and the
+	// word counts are compared in both directions, so the order matters only in borderline cases.
+	static isSimilarWords(words, curWords) {
+		const olen = words.length;
+		const len = curWords.length;
+		if(len < olen * 0.4 || len > olen * 3) {
+			return false;
+		}
+		let _olen = olen;
+		let n = 0;
+		let i = olen;
+		while(i--) {
+			if(olen > 6 && words[i].length < 3) {
+				_olen--;
+				continue;
+			}
+			let j = len;
+			while(j--) {
+				if(curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
+					n++;
+				}
+			}
+		}
+		return n >= _olen * 0.4;
+	}
+	// "Hide similar text" must keep hiding posts that arrive later, so the rule has to outlive the click.
+	// It is deliberately kept in memory only: it dies with the page, while the posts it already hid stay
+	// hidden (they are saved as regular user-hidden posts).
+	static addSimilarTextRule(srcNum, words) {
+		similarTextRules.set(srcNum, words);
+	}
+	static delSimilarTextRules(words) {
+		for(const [srcNum, ruleWords] of similarTextRules) {
+			// The post was hidden by one of these rules, so the very same comparison identifies it
+			if(Post.isSimilarWords(ruleWords, words)) {
+				similarTextRules.delete(srcNum);
+			}
+		}
+	}
+	static hideBySimilarText(post) {
+		if(!similarTextRules.size) {
+			return;
+		}
+		const curWords = Post.getWrds(post.text);
+		for(const [srcNum, words] of similarTextRules) {
+			if(Post.isSimilarWords(words, curWords)) {
+				post.setUserVisib(true, true, 'similar to >>' + srcNum);
+				return;
+			}
+		}
 	}
 	static getWrds(text) {
 		return text.replace(/\s+/g, ' ').replace(/[^a-zа-яё ]/ig, '').trim().substring(0, 800).split(' ');

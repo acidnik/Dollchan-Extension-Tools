@@ -9,6 +9,7 @@ tools/
   lib/browser.mjs          # locates playwright + a cached Chromium (no hardcoded paths or revisions)
   repro-file-paste.mjs     # attach a file to the postform on a real board (Ctrl+V / drag&drop)
   probe-blob-csp.mjs       # minimal probe: fetch/XHR of a blob: URL, with and without a CSP
+  probe-newpost.mjs        # simulate a post arriving through the thread updater
   probe-ext/               # 15-line MV3 extension used by the probe (content script = isolated world)
 ```
 
@@ -93,6 +94,52 @@ Two conclusions worth remembering:
   `default-src`, which does not list `blob:`).
 - A content script is **exempt from the page's CSP**, so this class of bug hits the userscript build while
   the browser extension keeps working. Always check which build the user is running before assuming.
+
+## probe-newpost.mjs
+
+Simulates a post arriving through the **thread updater** and reports how Dollchan treated it. The updater's
+own response is intercepted and one extra post is appended to it, so the app runs its real "new post" path
+(`Thread._addPost` → `Post.hideBySimilarText`) while nothing is posted on the board.
+
+```sh
+node tools/probe-newpost.mjs                        # check the current build
+BUNDLE=/tmp/before.js node tools/probe-newpost.mjs  # the same run against an older build
+```
+
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `BUNDLE` | `src/Dollchan_Extension_Tools.es6.user.js` | Bundle to inject |
+| `BOARD`, `THREAD` | `b`, auto-picked | 2ch board, thread — auto-pick prefers an idle thread with a long reply |
+| `MENU_ITEM` | `hide-text` | Which post menu item to click before injecting |
+| `MENU_CLICKS` | `1` | Click it twice to ask for the reverse and drop the rule again |
+| `EXPECT` | `hidden` | What the arriving post should be; `visible` for the `MENU_CLICKS=2` run |
+| `QUIET_MINUTES` | `30` | Idleness the auto-pick prefers |
+| `HEADLESS`, `TIMEOUT` | `1`, `60000` | Browser mode, navigation timeout |
+
+Exit code: `0` when the arriving post is in the `EXPECT`ed state, `1` otherwise, `2` on a setup failure.
+
+Recorded runs (2026, `b/res/…` on 2ch), which show the harness can fail:
+
+| run | `newPost.btn` | verdict |
+| --- | --- | --- |
+| bundle from before the fix | `de-btn-hide` | exit 1 — the arriving post was not hidden |
+| fixed bundle, `MENU_CLICKS=1` | `de-btn-unhide-user`, note `similar to >>…` | exit 0 — hidden |
+| fixed bundle, `MENU_CLICKS=2 EXPECT=visible` | `de-btn-hide` | exit 0 — the second click dropped the rule, so the next post is not hidden |
+
+Traps this harness had to work around — all of them silent, none of them obvious:
+
+- **A response served from the browser's HTTP cache never reaches `page.route`**, so the injection is
+  skipped without any sign of it. `lib/browser.mjs` therefore launches with `--disable-http-cache`, and the
+  probe also disables it over CDP. Count requests with `page.on('request')`, not inside the route handler:
+  otherwise "the route did not see it" looks exactly like "no request happened".
+- **`AjaxCache` drops the first response** and repeats the request with `?nocache=` when the answer carries
+  no `Cache-Control`, and the app only uses that second one. The payload has to stay armed across both.
+- **The synthetic number must not collide with a real post.** A busy board posts into the thread while the
+  probe runs; the app indexes posts by position, so the probe uses `last + 1000`.
+- **The updater hotkey `U` is ignored while focus sits in a text field** (`Hotkeys.js` adds `0x8000` to the
+  key code for inputs and textareas), so the probe blurs the active element first.
+- `className` is an `SVGAnimatedString` on the `<svg>` post buttons: read `baseVal`, not the object itself,
+  or every hidden-state check silently answers "not hidden".
 
 ## Adapting these to another bug
 

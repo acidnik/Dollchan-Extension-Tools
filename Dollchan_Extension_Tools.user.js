@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.2
+// @version         24.9.16.3
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -8494,8 +8494,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
   var _this24 = this;
   var _marked = _regenerator().m(getFormElements);
-  var version = '24.9.16.2';
-  var commit = '1c6ea22';
+  var version = '24.9.16.3';
+  var commit = 'bb80070';
 
 
   var doc = deWindow.document;
@@ -18281,9 +18281,9 @@ this.disableSpells();
       var needProgress,
         data,
         hasFiles,
-        _iterator34,
-        _step34,
-        _step34$value,
+        _iterator36,
+        _step36,
+        _step36$value,
         name,
         value,
         type,
@@ -18303,13 +18303,13 @@ this.disableSpells();
             needProgress = _args66.length > 2 && _args66[2] !== undefined ? _args66[2] : false;
             data = new FormData();
             hasFiles = false;
-            _iterator34 = _createForOfIteratorHelperLoose(getFormElements(form, submitter));
+            _iterator36 = _createForOfIteratorHelperLoose(getFormElements(form, submitter));
           case 1:
-            if ((_step34 = _iterator34()).done) {
+            if ((_step36 = _iterator36()).done) {
               _context66.n = 8;
               break;
             }
-            _step34$value = _step34.value, name = _step34$value.name, value = _step34$value.value, type = _step34$value.type, el = _step34$value.el;
+            _step36$value = _step36.value, name = _step36$value.name, value = _step36$value.value, type = _step36$value.type, el = _step36$value.el;
             val = value;
             if (!(name === 'de-file-txt')) {
               _context66.n = 2;
@@ -19459,6 +19459,7 @@ this.disableSpells();
       }
     }]);
   }();
+  var similarTextRules = new Map();
   var AbstractPost = function () {
     function AbstractPost(thr, num, isOp) {
       _classCallCheck(this, AbstractPost);
@@ -20087,6 +20088,11 @@ Spells.addSpell(9, '', false);
                 for (post = Thread.first.op; post; post = post.next) {
                   Post.findSameText(num, !isHide, words, post);
                 }
+                if (isHide) {
+                  Post.addSimilarTextRule(num, words);
+                } else {
+                  Post.delSimilarTextRules(words);
+                }
                 return _context40.a(2);
               case 24:
                 _context40.n = 25;
@@ -20590,28 +20596,7 @@ Spells.addSpell(9, '', false);
     }, {
       key: "findSameText",
       value: function findSameText(pNum, isHidden, words, curPost) {
-        var curWords = Post.getWrds(curPost.text);
-        var len = curWords.length;
-        var i = words.length;
-        var olen = i;
-        var _olen = i;
-        var n = 0;
-        if (len < olen * 0.4 || len > olen * 3) {
-          return;
-        }
-        while (i--) {
-          if (olen > 6 && words[i].length < 3) {
-            _olen--;
-            continue;
-          }
-          var j = len;
-          while (j--) {
-            if (curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
-              n++;
-            }
-          }
-        }
-        if (n < _olen * 0.4 || len > _olen * 3) {
+        if (!Post.isSimilarWords(words, Post.getWrds(curPost.text))) {
           return;
         }
         if (isHidden) {
@@ -20628,6 +20613,65 @@ Spells.addSpell(9, '', false);
           curPost.setUserVisib(true, true, 'similar to >>' + pNum);
         }
         return false;
+      }
+    }, {
+      key: "isSimilarWords",
+      value: function isSimilarWords(words, curWords) {
+        var olen = words.length;
+        var len = curWords.length;
+        if (len < olen * 0.4 || len > olen * 3) {
+          return false;
+        }
+        var _olen = olen;
+        var n = 0;
+        var i = olen;
+        while (i--) {
+          if (olen > 6 && words[i].length < 3) {
+            _olen--;
+            continue;
+          }
+          var j = len;
+          while (j--) {
+            if (curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
+              n++;
+            }
+          }
+        }
+        return n >= _olen * 0.4;
+      }
+    }, {
+      key: "addSimilarTextRule",
+      value: function addSimilarTextRule(srcNum, words) {
+        similarTextRules.set(srcNum, words);
+      }
+    }, {
+      key: "delSimilarTextRules",
+      value: function delSimilarTextRules(words) {
+        for (var _iterator23 = _createForOfIteratorHelperLoose(similarTextRules), _step23; !(_step23 = _iterator23()).done;) {
+          var _step23$value = _slicedToArray(_step23.value, 2),
+            srcNum = _step23$value[0],
+            ruleWords = _step23$value[1];
+          if (Post.isSimilarWords(ruleWords, words)) {
+            similarTextRules["delete"](srcNum);
+          }
+        }
+      }
+    }, {
+      key: "hideBySimilarText",
+      value: function hideBySimilarText(post) {
+        if (!similarTextRules.size) {
+          return;
+        }
+        var curWords = Post.getWrds(post.text);
+        for (var _iterator24 = _createForOfIteratorHelperLoose(similarTextRules), _step24; !(_step24 = _iterator24()).done;) {
+          var _step24$value = _slicedToArray(_step24.value, 2),
+            srcNum = _step24$value[0],
+            words = _step24$value[1];
+          if (Post.isSimilarWords(words, curWords)) {
+            post.setUserVisib(true, true, 'similar to >>' + srcNum);
+            return;
+          }
+        }
       }
     }, {
       key: "getWrds",
@@ -22813,8 +22857,8 @@ Spells.addSpell(9, '', false);
     if (!post) {
       return;
     }
-    for (var _iterator23 = _createForOfIteratorHelperLoose(post.images), _step23; !(_step23 = _iterator23()).done;) {
-      var image = _step23.value;
+    for (var _iterator25 = _createForOfIteratorHelperLoose(post.images), _step25; !(_step25 = _iterator25()).done;) {
+      var image = _step25.value;
       var link = image.nameLink;
       if (!link) {
         return;
@@ -23171,8 +23215,8 @@ Spells.addSpell(9, '', false);
         var filesHTML = '';
         if (files !== null && files !== void 0 && files.length) {
           filesHTML = "<div class=\"post__images post__images_type_".concat(files.length === 1 ? 'single' : 'multi', "\">");
-          for (var _iterator24 = _createForOfIteratorHelperLoose(files), _step24; !(_step24 = _iterator24()).done;) {
-            var file = _step24.value;
+          for (var _iterator26 = _createForOfIteratorHelperLoose(files), _step26; !(_step26 = _iterator26()).done;) {
+            var file = _step26.value;
             var _file$fullname = file.fullname,
               fullname = _file$fullname === void 0 ? file.name : _file$fullname,
               _file$displayname = file.displayname,
@@ -23214,17 +23258,17 @@ Spells.addSpell(9, '', false);
     }, {
       key: "bannedPostsData",
       value: _regenerator().m(function bannedPostsData() {
-        var _iterator25, _step25, _step25$value, banned, num, _t39;
+        var _iterator27, _step27, _step27$value, banned, num, _t39;
         return _regenerator().w(function (_context48) {
           while (1) switch (_context48.n) {
             case 0:
-              _iterator25 = _createForOfIteratorHelperLoose(this._posts);
+              _iterator27 = _createForOfIteratorHelperLoose(this._posts);
             case 1:
-              if ((_step25 = _iterator25()).done) {
+              if ((_step27 = _iterator27()).done) {
                 _context48.n = 7;
                 break;
               }
-              _step25$value = _step25.value, banned = _step25$value.banned, num = _step25$value.num;
+              _step27$value = _step27.value, banned = _step27$value.banned, num = _step27$value.num;
               _t39 = banned;
               _context48.n = _t39 === 1 ? 2 : _t39 === 2 ? 4 : 6;
               break;
@@ -23317,8 +23361,8 @@ Spells.addSpell(9, '', false);
           return;
         }
         this._isHidden = true;
-        for (var _iterator26 = _createForOfIteratorHelperLoose(this._set), _step26; !(_step26 = _iterator26()).done;) {
-          var num = _step26.value;
+        for (var _iterator28 = _createForOfIteratorHelperLoose(this._set), _step28; !(_step28 = _iterator28()).done;) {
+          var num = _step28.value;
           var post = pByNum.get(num);
           if (post && !post.isHidden) {
             if (isForced) {
@@ -23335,8 +23379,8 @@ Spells.addSpell(9, '', false);
       key: "initPostRef",
       value: function initPostRef(tUrl, strNums) {
         var html = '';
-        for (var _iterator27 = _createForOfIteratorHelperLoose(this._set), _step27; !(_step27 = _iterator27()).done;) {
-          var num = _step27.value;
+        for (var _iterator29 = _createForOfIteratorHelperLoose(this._set), _step29; !(_step29 = _iterator29()).done;) {
+          var num = _step29.value;
           html += this._getHTML(num, tUrl, strNums === null || strNums === void 0 ? void 0 : strNums.has(num));
         }
         this._createEl(html, false);
@@ -23388,8 +23432,8 @@ Spells.addSpell(9, '', false);
           return;
         }
         this._isHidden = false;
-        for (var _iterator28 = _createForOfIteratorHelperLoose(this._set), _step28; !(_step28 = _iterator28()).done;) {
-          var num = _step28.value;
+        for (var _iterator30 = _createForOfIteratorHelperLoose(this._set), _step30; !(_step30 = _iterator30()).done;) {
+          var num = _step30.value;
           var post = pByNum.get(num);
           if (post && post.isHidden && !post.spellHidden) {
             if (isForced) {
@@ -23430,14 +23474,14 @@ Spells.addSpell(9, '', false);
       key: "gen",
       value: function gen(posts) {
         var tNums = DelForm.tNums;
-        for (var _iterator29 = _createForOfIteratorHelperLoose(posts), _step29; !(_step29 = _iterator29()).done;) {
-          var _step29$value = _slicedToArray(_step29.value, 2),
-            pNum = _step29$value[0],
-            post = _step29$value[1];
-          for (var _iterator30 = _createForOfIteratorHelperLoose(post.refLinks()), _step30; !(_step30 = _iterator30()).done;) {
-            var _step30$value = _slicedToArray(_step30.value, 2),
-              link = _step30$value[0],
-              lNum = _step30$value[1];
+        for (var _iterator31 = _createForOfIteratorHelperLoose(posts), _step31; !(_step31 = _iterator31()).done;) {
+          var _step31$value = _slicedToArray(_step31.value, 2),
+            pNum = _step31$value[0],
+            post = _step31$value[1];
+          for (var _iterator32 = _createForOfIteratorHelperLoose(post.refLinks()), _step32; !(_step32 = _iterator32()).done;) {
+            var _step32$value = _slicedToArray(_step32.value, 2),
+              link = _step32$value[0],
+              lNum = _step32$value[1];
             if (MyPosts.has(lNum)) {
               link.classList.add('de-ref-you');
               if (!MyPosts.has(pNum) && post instanceof AbstractPost) {
@@ -23821,6 +23865,8 @@ Spells.addSpell(9, '', false);
           this.userTouched["delete"](num);
         } else if (HiddenPosts.has(num)) {
           HiddenPosts.hideHidden(post, num);
+        } else {
+          Post.hideBySimilarText(post);
         }
         if (maybeVParser.value) {
           maybeVParser.value.parse(post);
@@ -23842,11 +23888,11 @@ Spells.addSpell(9, '', false);
         if (!aib.qBan) {
           return;
         }
-        for (var _iterator31 = _createForOfIteratorHelperLoose(pBuilder.bannedPostsData()), _step31; !(_step31 = _iterator31()).done;) {
-          var _step31$value = _slicedToArray(_step31.value, 3),
-            banId = _step31$value[0],
-            bNum = _step31$value[1],
-            bEl = _step31$value[2];
+        for (var _iterator33 = _createForOfIteratorHelperLoose(pBuilder.bannedPostsData()), _step33; !(_step33 = _iterator33()).done;) {
+          var _step33$value = _slicedToArray(_step33.value, 3),
+            banId = _step33$value[0],
+            bNum = _step33$value[1],
+            bEl = _step33$value[2];
           var post = bNum ? pByNum.get(bNum) : this.op;
           if (post && post.banned !== banId) {
             $q(aib.qBan, post.el).remove();
@@ -28205,8 +28251,8 @@ Spells.addSpell(9, '', false);
             };
             var files = [new File([new Blob([ContentLoader.getDataFromCanvas($q('.wPaint-canvas', oekakiEl))], mime)], 'oekaki.png', mime)].concat(_toConsumableArray(data.getAll('files').slice(0, -1)));
             data["delete"]('files');
-            for (var _iterator32 = _createForOfIteratorHelperLoose(files), _step32; !(_step32 = _iterator32()).done;) {
-              var file = _step32.value;
+            for (var _iterator34 = _createForOfIteratorHelperLoose(files), _step34; !(_step34 = _iterator34()).done;) {
+              var file = _step34.value;
               data.append('files', file);
             }
           }
@@ -28590,8 +28636,8 @@ Spells.addSpell(9, '', false);
         case 'registerapi':
           if (data) {
             rv = {};
-            for (var _iterator33 = _createForOfIteratorHelperLoose(data), _step33; !(_step33 = _iterator33()).done;) {
-              var aName = _step33.value;
+            for (var _iterator35 = _createForOfIteratorHelperLoose(data), _step35; !(_step35 = _iterator35()).done;) {
+              var aName = _step35.value;
               rv[aName] = DollchanAPI._register(aName.toLowerCase());
             }
           }

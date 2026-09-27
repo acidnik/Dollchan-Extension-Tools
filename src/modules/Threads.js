@@ -269,6 +269,8 @@ class Thread {
 			this.userTouched.delete(num);
 		} else if(HiddenPosts.has(num)) {
 			HiddenPosts.hideHidden(post, num);
+		} else {
+			Post.hideBySimilarText(post);
 		}
 		if(maybeVParser.value) {
 			maybeVParser.value.parse(post);
