@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.9
+// @version         24.9.16.28
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -27,8 +27,8 @@
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.9';
-const commit = '1acb452';
+const version = '24.9.16.28';
+const commit = '1173e8b';
 
 /* ==[ GlobalVars.js ]== */
 
@@ -175,7 +175,7 @@ const defaultCfg = {
     closePopups : 0,    // close popups automatically
     updDollchan : 2,    // Check for Dollchan updates [0=off, 1=per day, 2=2days, 3=week, 4=2weeks, 5=month]
     // WINDOWS
-    textaWidth  : 300,  // textarea width (px)
+    textaWidth  : 0,    // textarea width (px), 0 = as wide as the form
     textaHeight : 115,  // textarea height (px)
     replyWinDrag: 0,          // draggable "Quick Reply" form
     replyWinX   : 'right: 0', //    "Quick Reply" form X position
@@ -8832,6 +8832,7 @@ class PostForm {
         if(Cfg.altLayout) {
             this._applyAltLayout();
         }
+        this.logState('form built');
         if(Cfg.addSageBtn && this.mail) {
             PostForm.hideField(this.mail.closest('label') || this.mail);
             setTimeout(() => this.toggleSage(), 0);
@@ -9040,9 +9041,105 @@ class PostForm {
             this._pBtn[+this.isBottom].after(this.pForm);
         }
         this.isHidden = needToHide;
+        // How the form gets its width differs by layout. The rebuilt form has no content of its own that
+        // could size it, so its container carries 70% of the page and the form fills it; the board's own
+        // form is hugged by the textarea, which already has a real width of its own.
+        if(Cfg.altLayout) {
+            this.pForm.style.setProperty('width', isQuick ? '100%' : 'min(100%, max(500px, 70%))');
+            this.form?.style.setProperty('width', '100%', 'important');
+        } else {
+            this.pForm.style.setProperty('width', 'fit-content');
+            this.pForm.style.setProperty('max-width', '100%');
+        }
+        // The container is now a narrower block than the area it sits in, so it needs the centring the board
+        // had: without it the reply form ends up pushed against the left edge
+        this.pForm.style.setProperty('margin', '0 auto');
         $toggle(this.qArea, isQuick);
         $toggle(this.pForm, !needToHide);
         this.updatePAreaBtns();
+        this.logState(isQuick ? 'under a post' : this.isBottom ? 'bottom of the page' : 'top of the page');
+    }
+    // A one-line state dump for bug reports, off by default: run localStorage.deDebug = 1 in the console once,
+    // and every placement of the reply form prints its settings, layout and measured widths as one JSON line.
+    // Set it to 0 (or delete the key) to switch the log off again.
+    logState(where) {
+        let on;
+        try {
+            const pageFlag = deWindow.localStorage && deWindow.localStorage.deDebug;
+            on = !!(locStorage && locStorage.deDebug || pageFlag);
+        } catch(err) {
+            on = false;
+        }
+        if(!on) {
+            return;
+        }
+        // the placement and the widths settle a frame later, and the form can still be hidden right now
+        setTimeout(() => {
+            const { form, pForm, qArea, name, subj, mail, passw } = this;
+            const width = el => Math.round(el.getBoundingClientRect().width);
+            const field = el => el ? {
+                name   : el.getAttribute('name') || el.type,
+                visible: el.offsetParent !== null,
+                width  : width(el),
+                cell   : (el.closest('.de-altcell')?.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 24)
+            } : null;
+            // Every ancestor of the form with its width and the properties that can widen it: this names the
+            // element that is wider than the form, and why
+            const chain = el => {
+                const arr = [];
+                for(let e = el; e && e !== document.documentElement; e = e.parentElement) {
+                    const cs = getComputedStyle(e);
+                    arr.push(`${ e.tagName.toLowerCase() }${ e.id ? '#' + e.id : '' }${
+                        e.className ? '.' + (e.className + '').trim().split(/\s+/)[0] : '' }=${
+                        Math.round(e.getBoundingClientRect().width) }px ${ cs.display } pad=${
+                        cs.paddingLeft }/${ cs.paddingRight } bg=${ cs.backgroundColor }`);
+                }
+                return arr;
+            };
+            const rowText = row => [...row.querySelectorAll('.de-altcell')]
+                .map(c => (c.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 14)).join(' | ');
+            const state = {
+                where,
+                version    : `${ version } (${ commit })`,
+                env        : nav.scriptHandler,
+                url        : deWindow.location.href.slice(0, 80),
+                windowWidth: deWindow.innerWidth,
+                altBuilt   : !!$q('.de-altform', form),
+                cfg        : {
+                    altLayout  : Cfg.altLayout,
+                    addPostForm: Cfg.addPostForm,
+                    addSageBtn : Cfg.addSageBtn,
+                    noName     : Cfg.noName,
+                    noSubj     : Cfg.noSubj,
+                    noPassword : Cfg.noPassword,
+                    userName   : Cfg.userName,
+                    insertNum  : Cfg.insertNum,
+                    showRepBtn : Cfg.showRepBtn,
+                    txtBtnsLoc : Cfg.txtBtnsLoc,
+                    addTextBtns: Cfg.addTextBtns,
+                    textaWidth : Cfg.textaWidth,
+                    textaHeight: Cfg.textaHeight
+                },
+                form: form ? {
+                    visible : form.offsetParent !== null,
+                    width   : width(form),
+                    minWidth: getComputedStyle(form).minWidth,
+                    table   : width(form.querySelector('table')),
+                    textarea: width(form.querySelector('textarea'))
+                } : null,
+                container: pForm ? width(pForm) : null,
+                replyBox : qArea ? {
+                    cls    : qArea.className,
+                    visible: qArea.offsetParent !== null,
+                    width  : width(qArea)
+                } : null,
+                chain: form ? chain(form) : null,
+                rows : form ? [...form.querySelectorAll('.de-altrow')]
+                    .map((row, i) => `${ i }: ${ rowText(row) }`) : null,
+                fields: { name: field(name), subject: field(subj), mail: field(mail), password: field(passw) }
+            };
+            console.log('dE form: ' + JSON.stringify(state));
+        }, 150);
     }
     showMainReply(isBottom, e) {
         this.closeReply();
@@ -9230,12 +9327,25 @@ class PostForm {
             updater.pauseUpdater();
         });
     }
+    // The reply textarea gives the form its width, and the box around it should be exactly that wide. The width
+    // is therefore a real value here — the one the user dragged onto the textarea, or 70% of the page by default
+    // — while the container and the quick reply box only hug the content. That is what keeps a block from
+    // stretching past the fields inside it, and what makes it match the textarea.
+    setTextaSize() {
+        const { txta } = this;
+        if(!txta) {
+            return;
+        }
+        // The viewport, not a container: at this point the form can still be hidden, and a hidden element
+        // reports clientWidth 0, which would collapse the textarea to its minimum width
+        txta.style.setProperty('width', `${ Cfg.textaWidth || Math.round(deWindow.innerWidth * 0.7) }px`, 'important');
+        txta.style.setProperty('height', `${ Cfg.textaHeight }px`, 'important');
+    }
     _initTextarea() {
         const el = this.txta;
         el.classList.add('de-textarea');
         const { style } = el;
-        style.setProperty('width', Cfg.textaWidth + 'px', 'important');
-        style.setProperty('height', Cfg.textaHeight + 'px', 'important');
+        this.setTextaSize();
         // Allow to scroll page on PgUp/PgDn
         el.addEventListener('keypress', e => {
             const code = e.charCode || e.keyCode;
@@ -9315,9 +9425,13 @@ class PostForm {
         this._pBtn = [this.pArea[0].firstChild, this.pArea[1].firstChild];
         this._pBtn[0].firstElementChild.onclick = e => this.showMainReply(false, e);
         this._pBtn[1].firstElementChild.onclick = e => this.showMainReply(true, e);
+        // The quick reply box is the board's own element, and endchan pins it to fit-content with
+        // !important — our marker class outranks that rule, so the form keeps its width under a post in both
+        // layouts: the rebuilt one and the board's own
         this.qArea = nav.parseHTML(`<div style="display: none; ${ Cfg.replyWinX }; ${
             Cfg.replyWinY }; z-index: ${ ++topWinZ };" id="de-win-reply" class="${
-            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }"></div>`);
+            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }${
+            Cfg.altLayout ? ' de-reply-wide' : '' }"></div>`);
         this.isBottom = Cfg.addPostForm === 1;
         this.setReply(false, !aib.t || Cfg.addPostForm > 1);
     }
@@ -9346,9 +9460,6 @@ class PostForm {
     // captcha.parentEl) are pointed at those cells, so their own logic keeps working on the rebuilt form.
     _applyAltLayout() {
         const { form, txta, subm, name, subj, mail, passw, video, files, captcha } = this;
-        // The quick reply box is the board's own element, and endchan pins it to fit-content with
-        // !important; our marker class outranks that rule, so the form keeps its width under a post too.
-        this.qArea.classList.add('de-altreply');
         const isTable = !!txta.closest('tr');
         const mk = (tag, cls) => {
             const el = doc.createElement(tag);
@@ -9385,11 +9496,20 @@ class PostForm {
         // our cell instead: it then lives in one place and hides together with its field. A field that already
         // travels with its own <label> is left alone, so nothing gets labelled twice.
         const withLabel = el => {
-            if(!el || el.closest('label') || el.parentElement?.querySelector('label')) {
+            // Only a real form field has a label to collect: a button (the sage button lives in the subject's
+            // row) would borrow that row's label and put it next to the wrong control
+            if(!el || !el.matches('input, select, textarea') || el.placeholder || el.closest('label') ||
+                el.parentElement?.querySelector('label')) {
                 return [el];
             }
             const tr = el.closest('tr');
-            const label = tr && [...tr.children].find(cell => (cell.textContent || '').trim() &&
+            const own = el.closest('td, th');
+            // The label sits in a neighbouring cell of the field's own row. A control that is not in such a
+            // cell — the sage button, for one — has no label of its own and must not borrow the row's
+            if(!tr || !own || own.parentElement !== tr) {
+                return [el];
+            }
+            const label = [...tr.children].find(cell => cell !== own && (cell.textContent || '').trim() &&
                 !cell.querySelector('input, select, textarea, button'));
             return label ? [...label.childNodes, el] : [el];
         };
@@ -9521,7 +9641,7 @@ class PostForm {
         const linkCell = cell(...boardEls);
         linkCell.classList.add('de-altcell-links');
         const rows = [
-            row(cell(...withLabel(name)), cell(...withLabel(subj)), cell(...withLabel(sageBtn || mail))),
+            row(cell(...withLabel(name)), cell(subj), cell(...withLabel(sageBtn || mail))),
             row(cell(...withLabel(groupOf(spoiler))), cell(...withLabel(groupOf(flag)))),
             row(fileCell, cell(...withLabel(video))),
             row(cell(markup, this._getFormHelpEl())),
@@ -9534,6 +9654,21 @@ class PostForm {
         const layout = mk(isTable ? 'table' : 'div', 'de-altform');
         layout.append(...rows);
         form.prepend(layout);
+        // The subject is a one-liner beside the name, so it is worth about three times the name's width. The
+        // cell grows into the row up to that width, and the two min-width: 0 let it shrink again on a narrow
+        // screen: a fixed width here would raise the table's min-content and push the whole form past the
+        // screen, since a table can never be narrower than its widest cell. Three times a default nameless
+        // input is 540px, which is also what a form that is still hidden gives (addPostForm = 2).
+        if(name && subj) {
+            const nameWidth = Math.round(name.getBoundingClientRect().width);
+            const cell = subj.closest('.de-altcell');
+            if(cell) {
+                cell.style.setProperty('flex', '1 1 12em', 'important');
+                cell.style.setProperty('max-width', `${ nameWidth ? nameWidth * 3 : 540 }px`, 'important');
+            }
+            subj.style.setProperty('width', '100%', 'important');
+            subj.style.setProperty('min-width', '0', 'important');
+        }
         // The board's own layout stays in place but is hidden: it still carries the hidden fields and the
         // board's own fallback submit button, and display:none does not stop them from being submitted
         for(const el of [...form.children]) {
@@ -18979,13 +19114,13 @@ function scriptCSS() {
     .de-file-txt-wrap { display: inline-flex; width: 100%; }
     .de-file-utils { display: inline-flex; align-items: center; float: none; }
     .de-file-wrap { display: flex; align-items: center; }
-    /* 70% of the page, never narrower than 500px, never past the screen: on a narrow screen (a phone) the
-       same expression gives the full width, so no media query is needed. The first width is a fallback for
-       browsers without min()/max(). */
-    .de-altform-form {
-        width: 70%;
-        max-width: 100%;
-        width: min(100%, max(500px, 70%));
+    /* The rebuilt form has no content that could size it, so its container carries 70% of the page and the form
+       fills it. In the board's own layout the textarea carries a width of its own (see Form.js) and everything
+       else hugs it. 70% of the page, never narrower than 500px and never past the screen: on a narrow screen (a
+       phone) the same expression gives the full width, so no media query is needed. */
+    #de-pform > form.de-altform-form {
+        min-width: 70%;
+        min-width: min(100%, max(500px, 70%));
         box-sizing: border-box;
     }
     /* Under a post the form is moved into the board's own reply box, and the board pins that box to
@@ -18993,16 +19128,17 @@ function scriptCSS() {
        parent and fell back to its 500px floor. The box takes the form's width instead, and the form fills
        the box, so the form comes out the same width in both places. Our marker class is what outranks the
        board's rule: dE itself asks for width: auto !important on that box. */
-    #de-win-reply.de-win-inpost.de-altreply {
-        width: 70% !important;
-        max-width: 100%;
-        width: min(100%, max(500px, 70%)) !important;
+    #de-win-reply.de-win-inpost.de-reply-wide {
+        min-width: 70% !important;
+        min-width: min(100%, max(500px, 70%)) !important;
         box-sizing: border-box;
     }
-    #de-win-reply.de-win-inpost.de-altreply .de-altform-form { width: 100%; }
+    #de-win-reply.de-win-inpost.de-reply-wide #de-pform > form { width: 100%; min-width: 0; }
     .de-altform { width: 100%; border-collapse: collapse; }
     .de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
-    .de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+    /* min-width: 0 lets a cell shrink below its content: a flex item otherwise refuses to go under its
+       min-content width, and a wide input would push the form past the screen */
+    .de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; min-width: 0; }
     .de-altfile { display: inline-flex; align-items: center; }
     .de-altform-help { margin-left: 4px; font: bold 16px/16px sans-serif; text-decoration: underline; }
     .de-altcell-cap { display: block; }

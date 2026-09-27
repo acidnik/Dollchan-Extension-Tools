@@ -127,7 +127,7 @@ const defaultCfg = {
     closePopups : 0,    // close popups automatically
     updDollchan : 2,    // Check for Dollchan updates [0=off, 1=per day, 2=2days, 3=week, 4=2weeks, 5=month]
     // WINDOWS
-    textaWidth  : 300,  // textarea width (px)
+    textaWidth  : 0,    // textarea width (px), 0 = as wide as the form
     textaHeight : 115,  // textarea height (px)
     replyWinDrag: 0,          // draggable "Quick Reply" form
     replyWinX   : 'right: 0', //    "Quick Reply" form X position

@@ -303,6 +303,18 @@ shape complete: a partial object makes the reply submit throw before it does any
 - The captcha container is **empty while the layout is built**: Dollchan's `Captcha` empties it and
   restores it on focus, so its cell has to stay in the layout while empty — otherwise the captcha is
   restored into a detached node and never shows.
+- The reply form is as wide as its **textarea**: `Cfg.textaWidth`, or 70% of the viewport when that is 0
+  (the old default of 300px is what made a form spanning 70% of the page look narrow). The container
+  (`#de-pform`) and the quick reply box only hug the content, which is why the board's own form is sized by
+  its message field too. Never give the container a width and the form a percentage of it: the form's
+  percentage then resolves against the container and the two disagree — a block wider than the form.
+  Because the container ends up narrower than the area it sits in, it needs `margin: 0 auto` to stay
+  centred. The alternative layout is the exception: its rebuilt form has no content of its own to be sized
+  by, so there the container carries 70% of the page and the form fills it.
+- `localStorage.deDebug = 1` makes `PostForm.logState()` print one `dE form:` JSON line per placement of the
+  reply form — version and commit, script handler, the form's width and that of its table and textarea,
+  every ancestor with its width, the alt-layout rows, the fields and the settings that shape them. Ask a
+  user for that line instead of guessing at their state.
 - A form can be `display: inline-block` (the board's own), so a percentage width on something inside it
   resolves against nothing: widths belong on the form itself.
 
