@@ -2,6 +2,7 @@
 
 const browserify   = require('browserify');
 const { spawn }    = require('child_process');
+const fs           = require('fs');
 const gulp         = require('gulp');
 const newfile      = require('gulp-file');
 const headerfooter = require('gulp-headerfooter');
@@ -16,6 +17,42 @@ const watchedPaths = [
 	'src/es5-polyfills.js',
 	'Dollchan_Extension_Tools.meta.js'
 ];
+
+// Every source file that carries the version. Userscript managers only offer an update when @version
+// grows, so this is bumped on every commit. The built artifacts are not listed here: `make` bakes the
+// version into them from meta.js (userscript header) and from menu.html. package.json/package-lock.json
+// are not listed either — npm rejects 4-part versions, so they keep the 3-part form.
+const versionFiles = [
+	'src/modules/Wrap.js',
+	'Dollchan_Extension_Tools.meta.js',
+	'extension/v2/manifest.json',
+	'extension/v3/manifest.json',
+	'extension/v2/menu/menu.html',
+	'extension/v3/menu/menu.html'
+];
+
+// Bumps the last part of the version (24.9.16.0 -> 24.9.16.1). Run it before `make`, never after.
+gulp.task('bump', cb => {
+	const wrapFile = 'src/modules/Wrap.js';
+	const oldVersion = fs.readFileSync(wrapFile, 'utf8').match(/const version = '(\d+(?:\.\d+)*)';/)?.[1];
+	if(!oldVersion) {
+		throw new Error(`No version found in ${ wrapFile }`);
+	}
+	const parts = oldVersion.split('.');
+	parts[parts.length - 1] = +parts[parts.length - 1] + 1;
+	const newVersion = parts.join('.');
+	for(const file of versionFiles) {
+		const str = fs.readFileSync(file, 'utf8');
+		const count = str.split(oldVersion).length - 1;
+		if(!count) {
+			throw new Error(`Version ${ oldVersion } not found in ${ file }`);
+		}
+		fs.writeFileSync(file, str.split(oldVersion).join(newVersion));
+		console.log(`${ file }: ${ count } occurrence(s)`);
+	}
+	console.log(`Version ${ oldVersion } -> ${ newVersion }`);
+	cb();
+});
 
 // Updates commit version in Wrap.js module
 gulp.task('updatecommit', cb => {

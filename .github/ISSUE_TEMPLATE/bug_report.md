@@ -10,7 +10,7 @@ assignees: ''
 **Before submitting a bug report**
 - Make sure you are using the latest version.
   If you are using a userscript, try upgrading from the link:
-  https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js
+  https://github.com/acidnik/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js
 - Is this error occurring if you turn off the Dollchan?
 - Look for the similar mentions about this bug in Issues.
 

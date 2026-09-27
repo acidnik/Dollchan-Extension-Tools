@@ -10,7 +10,7 @@ assignees: ''
 **Прежде, чем отправлять баг репорт**
 - Удостоверьтесь, что вы пользуетесь последней версией.
   Если вы используете юзерскрипт, попробуйте обновиться по ссылке:
-  https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js
+  https://github.com/acidnik/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js
 - Наблюдается ли данная ошибка, если выключить Dollchan?
 - Поищите упоминание об этом баге, возможно, отчёт о нём уже был раньше.
 

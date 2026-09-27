@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.0
+// @version         24.9.16.1
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
 // @description     Doing some profit for imageboards
-// @icon            https://raw.github.com/SthephanShinkufag/Dollchan-Extension-Tools/master/Icon.png
-// @updateURL       https://raw.github.com/SthephanShinkufag/Dollchan-Extension-Tools/master/Dollchan_Extension_Tools.meta.js
+// @icon            https://raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/Icon.png
+// @updateURL       https://raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/Dollchan_Extension_Tools.meta.js
 // @nocompat        Chrome
 // @run-at          document-start
 // @grant           GM_getValue
@@ -27,14 +27,17 @@
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.0';
-const commit = 'fa2468a';
+const version = '24.9.16.1';
+const commit = 'd0f7eff';
 
 /* ==[ GlobalVars.js ]== */
 
 const doc = deWindow.document;
+// Wiki links stay on the upstream repository: this fork has no wiki of its own, and the pages document the
+// same features. gitRaw must point at this fork — checkForUpdates() compares the remote version and commit
+// with the local ones, and the news of a new upstream release is irrelevant here.
 const gitWiki = 'https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/wiki/';
-const gitRaw = 'https://raw.githubusercontent.com/SthephanShinkufag/Dollchan-Extension-Tools/master/';
+const gitRaw = 'https://raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/';
 
 let aib, Cfg, dTime, isExpImg, isPreImg, lang, locStorage, nav, needScroll, pByEl, pByNum, postform,
 	sesStorage, updater;
@@ -10112,19 +10115,32 @@ class FileInput {
 	get _wrap() {
 		return aib.multiFile ? this._input.parentNode : this._input;
 	}
-	_addNewThumb(fileData, fileName, fileType, fileSize) {
+	async _addNewThumb(fileData, fileName, fileType, fileSize) {
 		let el = this._thumb;
 		el.classList.remove('de-file-off');
 		el = el.firstChild.firstChild;
 		el.title = `${ fileName }, ${ (fileSize / 1024).toFixed(2) }KB`;
-		this._mediaEl = el = $aBegin(el, fileType.startsWith('video/') ?
-			'<video class="de-file-img" loop autoplay muted src=""></video>' :
-			'<img class="de-file-img" src="">');
-		el.src = deWindow.URL.createObjectURL(new Blob([fileData]));
+		const isVideo = fileType.startsWith('video/');
+		// No src attribute yet: for images it is set after decoding, and an empty src="" would make the
+		// browser resolve it against the document URL
+		const mediaEl = this._mediaEl = el = $aBegin(el, isVideo ?
+			'<video class="de-file-img" loop autoplay muted></video>' :
+			'<img class="de-file-img">');
 		if((el = el.nextSibling)) {
 			deWindow.URL.revokeObjectURL(el.src);
 			el.remove();
 		}
+		const blobUrl = () => deWindow.URL.createObjectURL(new Blob([fileData], { type: fileType }));
+		if(isVideo) {
+			// A video can only be previewed through a URL, and there is no alternative to blob: for it
+			mediaEl.src = blobUrl();
+			return;
+		}
+		const previewUrl = await getImgPreviewUrl(fileData, fileType);
+		if(this._mediaEl !== mediaEl) { // the file was removed or replaced while it was decoding
+			return;
+		}
+		mediaEl.src = previewUrl ?? blobUrl();
 	}
 	_addRarJpeg() {
 		const el = this._parent.rarInput;
@@ -10249,6 +10265,32 @@ class FileInput {
 		const name = isAdd ? 'addEventListener' : 'removeEventListener';
 		el[name]('dragover', e => e.preventDefault());
 		['dragenter', 'dragleave', 'drop'].forEach(e => el[name](e, this));
+	}
+}
+
+// Makes a preview source for a local image. A downscaled data: URL is used instead of a blob: URL for two
+// reasons: the preview is shown in a ~90px box, so putting a whole full-resolution file there wastes
+// memory, and boards can reject blob: for images — endchan.org sends `img-src 'self' data: ...` in a meta
+// CSP tag, which leaves the preview empty. Returns null when the file cannot be decoded as an image, so
+// that the caller can keep using a blob: URL.
+async function getImgPreviewUrl(data, type) {
+	if(!type.startsWith('image/') || typeof createImageBitmap !== 'function') {
+		return null;
+	}
+	try {
+		const blob = new Blob([data], { type });
+		const bitmap = await createImageBitmap(blob, { imageOrientation: 'from-image' });
+		// .de-file is 90px wide (multiFile) or 130px (Css.js), doubled for high-DPI screens
+		const maxSize = (aib.multiFile ? 90 : 130) * 2;
+		const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
+		const canvas = doc.createElement('canvas');
+		canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+		canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+		canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+		bitmap.close?.();
+		return canvas.toDataURL('image/png');
+	} catch(err) {
+		return null;
 	}
 }
 

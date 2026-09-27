@@ -21,6 +21,13 @@ Wakaba/Kusaba/Tinyboard/Vichan/TinyIB/LynxChan/FoolFuuka).
 
 Always edit `src/modules/*.js` (or `src/es5-polyfills.js`, `Dollchan_Extension_Tools.meta.js`) and rebuild.
 
+The artifacts are committed exactly as the local build writes them, and their line endings follow the
+checkout: upstream builds from a CRLF checkout, while on Linux the modules are LF, so a bundle ends up
+mostly LF with a CRLF first line (the gulpfile's `make:es6` writes a leading `\r\n`). Their diffs are
+binary-marked in `.gitattributes`, so this churn is invisible in review — **do not hand-normalize them**,
+the next `make` undoes it. Compare them with `diff <(git show HEAD:<file> | tr -d '\r') <(tr -d '\r' < <file>)`
+to see the real change.
+
 ## Build
 
 `node_modules` is not committed. First run `npm install`, then use the local gulp CLI
@@ -35,14 +42,44 @@ Always edit `src/modules/*.js` (or `src/es5-polyfills.js`, `Dollchan_Extension_T
 | `gulp make:modules` | **Destructive**: splits the built ESNext file back into `src/modules/*` |
 | `gulp default` | `make` + watch on `src/modules/*`, `src/es5-polyfills.js`, `*.meta.js` |
 | `gulp updatecommit` | Rewrites `const commit = '…'` in `Wrap.js` from `git rev-parse HEAD` |
+| `gulp bump` | Increments the version in every file that carries it — run **before** `make` |
 
 `updatecommit` is the first step of `make:es6` (and thus of `make:es5` and `make`), so **a build always
 leaves `src/modules/Wrap.js` modified**. That is expected — do not revert it silently.
 
-The version string is duplicated and must be bumped together: `const version` in `src/modules/Wrap.js`,
-`@version` in `Dollchan_Extension_Tools.meta.js`, `"version"` in `extension/v2/manifest.json` and
-`extension/v3/manifest.json` (full `24.9.16.0` form), plus the short form in `package.json`.
-`Misc.js` scrapes the remote `const version = '…'` to detect updates.
+### Version bumps
+
+**Bump the version on every commit.** Userscript managers only offer an update when `@version` grows, so a
+commit that ships without a bump is a fix nobody receives. The scheme is a counter in the fourth part:
+`24.9.16.0` → `24.9.16.1` → `24.9.16.2` (the first three parts stay as the upstream release this fork is
+based on).
+
+```sh
+npx gulp bump     # 24.9.16.N -> 24.9.16.N+1, in every file that carries it
+npx gulp make     # then rebuild: the artifacts bake in the version from meta.js and menu.html
+```
+
+`gulp bump` rewrites the six files that carry the full 4-part version — `src/modules/Wrap.js`,
+`Dollchan_Extension_Tools.meta.js`, both `extension/v*/manifest.json`, both `extension/v*/menu/menu.html` —
+and fails loudly if one of them does not contain the current version. Order matters: bump first, build
+second, never the other way round.
+
+`package.json` and `package-lock.json` are deliberately **not** bumped: npm rejects 4-part versions, so they
+keep the 3-part `24.9.16` form and only change if the first three parts ever do. Both Chrome and Firefox
+accept 4-part extension versions (verified by loading `extension/v3`).
+
+### The update path must point at this fork
+
+`@updateURL` in `Dollchan_Extension_Tools.meta.js` and `gitRaw` in `GlobalVars.js` are what make updates
+work, and both must name this fork (`acidnik/Dollchan-Extension-Tools`) — inherited upstream values make
+managers check the upstream script and silently offer *its* build. `gitRaw` is also what
+`Misc.js checkForUpdates()` scrapes for the remote `const version`/`const commit`, so it has to be this
+repository or the in-app check answers about the wrong project.
+
+Never change `@namespace`, `@name` or `@description`: managers match an installed script by namespace and
+name, so changing either makes it a different script and the existing installs stop updating. `gitWiki`
+intentionally stays on the upstream wiki — this fork has no wiki of its own, and those pages document the
+same features.
 
 ## Module system (important)
 

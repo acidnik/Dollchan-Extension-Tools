@@ -1,16 +1,16 @@
-![Last commit](https://img.shields.io/github/last-commit/SthephanShinkufag/Dollchan-Extension-Tools.svg)&nbsp;![Commit activity](https://img.shields.io/github/commit-activity/y/SthephanShinkufag/Dollchan-Extension-Tools.svg)&nbsp;![Bugs](https://img.shields.io/github/issues/SthephanShinkufag/Dollchan-Extension-Tools/bug.svg)&nbsp;![Enhancements](https://img.shields.io/github/issues/SthephanShinkufag/Dollchan-Extension-Tools/enhancement.svg)
+![Last commit](https://img.shields.io/github/last-commit/acidnik/Dollchan-Extension-Tools.svg)&nbsp;![Commit activity](https://img.shields.io/github/commit-activity/y/acidnik/Dollchan-Extension-Tools.svg)&nbsp;![Bugs](https://img.shields.io/github/issues/acidnik/Dollchan-Extension-Tools/bug.svg)&nbsp;![Enhancements](https://img.shields.io/github/issues/acidnik/Dollchan-Extension-Tools/enhancement.svg)
 
-# ![dE](https://raw.githubusercontent.com/SthephanShinkufag/Dollchan-Extension-Tools/master/extension/v3/icons/logo-32.png) Dollchan Extension Tools
+# ![dE](https://raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/extension/v3/icons/logo-32.png) Dollchan Extension Tools
 
-- **[ [ESNEXT USERSCRIPT](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js) ]** &mdash; Firefox 77+, Chrome 85+, Opera 71+
-- **[ [ES5 USERSCRIPT](https://raw.github.com/SthephanShinkufag/Dollchan-Extension-Tools/master/Dollchan_Extension_Tools.user.js) ]** &mdash; for old browsers
+- **[ [ESNEXT USERSCRIPT](https://github.com/acidnik/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js) ]** &mdash; Firefox 77+, Chrome 85+, Opera 71+
+- **[ [ES5 USERSCRIPT](https://raw.github.com/acidnik/Dollchan-Extension-Tools/master/Dollchan_Extension_Tools.user.js) ]** &mdash; for old browsers
 - **[ [FIREFOX EXTENSION](https://addons.mozilla.org/firefox/addon/dollchan_extension/) ]**
 
 ---
 - **[ [English wiki](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/wiki/home-en) ]**
 - **[ [Russian wiki](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/wiki) ]**
 - **[ [Homepage](https://dollchan.net/extension/) ]**
-- **License:** © 2023 Dollchan Extension Tools Team.<br>See the [LICENSE file](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/blob/master/LICENSE) for license rights and limitations (MIT).
+- **License:** © 2023 Dollchan Extension Tools Team.<br>See the [LICENSE file](https://github.com/acidnik/Dollchan-Extension-Tools/blob/master/LICENSE) for license rights and limitations (MIT).
 
 ---
 **Dollchan Extension** is the userscript and extension that combines various options & features, making you hang out on [imageboards](https://en.wikipedia.org/wiki/Imageboard) in an easier and more convenient way. If you have visited sites like [4chan.org](http://4chan.org/) or [2ch.hk](https://2ch.hk/), then you probably already heard about it.
@@ -48,7 +48,7 @@ Dollchan has both cross-browser and cross-board working scope. A list of support
 `npm install -g gulp-cli`
 3. Using Git, go to Dollchan repo and update dependencies:<br>
 `npm install`
-4. Then you can make both ES5 and ESNext userscript versions from [/src/modules](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/tree/master/src/modules) by running:<br>
+4. Then you can make both ES5 and ESNext userscript versions from [/src/modules](https://github.com/acidnik/Dollchan-Extension-Tools/tree/master/src/modules) by running:<br>
 `gulp make`
 5. Or you can make ESNext version only:<br>
 `gulp make:es6`
@@ -63,7 +63,7 @@ Dollchan has both cross-browser and cross-board working scope. A list of support
 disable your existing Dollchan extension if available.
 2. Set the `"Developer's mode"` checkbox, press the `"Load unpacked extension"` button.
 3. Select the path to `/extension/v3` directory in your Dollchan repo.<br>
-If you don't have a Dollchan repo, download and unpack the [repository archive](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/archive/master.zip) from the last state.
+If you don't have a Dollchan repo, download and unpack the [repository archive](https://github.com/acidnik/Dollchan-Extension-Tools/archive/master.zip) from the last state.
 4. Done.
 
 **Firefox**
@@ -71,7 +71,7 @@ If you don't have a Dollchan repo, download and unpack the [repository archive](
 disable your existing Dollchan extension if available.
 2. Go to `about:debugging#addons` page, press the `"Download temporary add-on…"` button.
 3. Open the `/extension/v3` directory in your Dollchan repo and select the path to `manifest.json` file.<br>
-If you don't have a Dollchan repo, download and unpack the [repository archive](https://github.com/SthephanShinkufag/Dollchan-Extension-Tools/archive/master.zip) from the last state.
+If you don't have a Dollchan repo, download and unpack the [repository archive](https://github.com/acidnik/Dollchan-Extension-Tools/archive/master.zip) from the last state.
 4. Done.
 
 **Firefox for Android**
