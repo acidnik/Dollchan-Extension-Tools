@@ -54,6 +54,11 @@ commit that ships without a bump is a fix nobody receives. The scheme is a count
 `24.9.16.0` → `24.9.16.1` → `24.9.16.2` (the first three parts stay as the upstream release this fork is
 based on).
 
+The exception is a commit that changes nothing the build consumes — `AGENTS.md`, `tools/`, `README.markdown`.
+There is nothing for a user to receive, and a bump would offer every install an update that changes nothing,
+so such commits are made as they are. Bump whenever something under `src/`, `extension/` or
+`Dollchan_Extension_Tools.meta.js` changes: that is what the published builds are made of.
+
 ```sh
 npx gulp bump     # 24.9.16.N -> 24.9.16.N+1, in every file that carries it
 npx gulp make     # then rebuild: the artifacts bake in the version from meta.js and menu.html

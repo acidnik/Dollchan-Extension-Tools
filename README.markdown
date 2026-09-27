@@ -1,5 +1,14 @@
 ![Last commit](https://img.shields.io/github/last-commit/acidnik/Dollchan-Extension-Tools.svg)&nbsp;![Commit activity](https://img.shields.io/github/commit-activity/y/acidnik/Dollchan-Extension-Tools.svg)&nbsp;![Bugs](https://img.shields.io/github/issues/acidnik/Dollchan-Extension-Tools/bug.svg)&nbsp;![Enhancements](https://img.shields.io/github/issues/acidnik/Dollchan-Extension-Tools/enhancement.svg)
 
+### Наши патчи
+
+Что этот форк добавляет к upstream — только починки, без новых настроек:
+
+- **Ctrl+V на бордах со строгим CSP.** Картинка из буфера читается напрямую, а не через `blob:`-URL, который режет политика сайта (endchan.org).
+- **Превью вложений.** Миниатюра строится как уменьшенный `data:`-URL, поэтому превью видны там, где `img-src` запрещает `blob:`; файл при этом не декодируется целиком ради бокса 90px.
+- **«Скрыть схожий текст» работает и для новых постов.** Правило живёт до перезагрузки страницы и применяется к постам, пришедшим через апдейтер; повторный клик его снимает.
+- **Ответ появляется сам на борде с задержкой.** Если тред пришёл без только что отправленного поста (endchan), он запрашивается повторно — до 3 раз с паузой 1 с.
+
 # ![dE](https://raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/extension/v3/icons/logo-32.png) Dollchan Extension Tools
 
 - **[ [ESNEXT USERSCRIPT](https://github.com/acidnik/Dollchan-Extension-Tools/raw/master/src/Dollchan_Extension_Tools.es6.user.js) ]** &mdash; Firefox 77+, Chrome 85+, Opera 71+
