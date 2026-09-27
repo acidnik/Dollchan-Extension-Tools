@@ -8495,7 +8495,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   var _this24 = this;
   var _marked = _regenerator().m(getFormElements);
   var version = '24.9.16.0';
-  var commit = '665d981';
+  var commit = 'fa2468a';
 
 
   var doc = deWindow.document;
@@ -17545,42 +17545,51 @@ this.disableSpells();
         el.addEventListener('paste', function () {
           var _ref24 = _asyncToGenerator(_regenerator().m(function _callee29(e) {
             var _e$clipboardData;
-            var files, _iterator18, _step18, file, inputs, i, len, input;
+            var files, inputs, inputFiles, _iterator18, _step18, file, i, len, input;
             return _regenerator().w(function (_context30) {
               while (1) switch (_context30.n) {
                 case 0:
                   files = e === null || e === void 0 || (_e$clipboardData = e.clipboardData) === null || _e$clipboardData === void 0 ? void 0 : _e$clipboardData.files;
-                  _iterator18 = _createForOfIteratorHelperLoose(files || []);
+                  if (!(!(files !== null && files !== void 0 && files.length) || !_this46.files)) {
+                    _context30.n = 1;
+                    break;
+                  }
+                  return _context30.a(2);
                 case 1:
+                  inputs = _this46.files._inputs;
+                  inputFiles = _this46.files._files;
+                  _iterator18 = _createForOfIteratorHelperLoose(files);
+                case 2:
                   if ((_step18 = _iterator18()).done) {
-                    _context30.n = 6;
+                    _context30.n = 7;
                     break;
                   }
                   file = _step18.value;
-                  inputs = _this46.files._inputs;
                   i = 0, len = inputs.length;
-                case 2:
+                case 3:
                   if (!(i < len)) {
-                    _context30.n = 5;
+                    _context30.n = 6;
                     break;
                   }
                   input = inputs[i];
                   if (input.hasFile) {
-                    _context30.n = 4;
+                    _context30.n = 5;
                     break;
                   }
-                  _context30.n = 3;
-                  return input.addUrlFile(URL.createObjectURL(file), file);
-                case 3:
-                  return _context30.a(3, 5);
+                  inputFiles[i] = file;
+                  _context30.n = 4;
+                  return FileInput._readDroppedFile(input, file);
                 case 4:
-                  ++i;
-                  _context30.n = 2;
-                  break;
+                  DollchanAPI.notify('filechange', inputFiles);
+                  return _context30.a(3, 6);
                 case 5:
-                  _context30.n = 1;
+                  ++i;
+                  _context30.n = 3;
                   break;
                 case 6:
+                  _context30.n = 2;
+                  break;
+                case 7:
                   return _context30.a(2);
               }
             }, _callee29);

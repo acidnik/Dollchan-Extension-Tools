@@ -28,7 +28,7 @@
 'use strict';
 
 const version = '24.9.16.0';
-const commit = '665d981';
+const commit = 'fa2468a';
 
 /* ==[ GlobalVars.js ]== */
 
@@ -9203,15 +9203,23 @@ class PostForm {
 				deWindow.focus();
 			}
 		});
-		// Add image from clipboard to file inputs on Ctrl+V
+		// Add files from clipboard to file inputs on Ctrl+V
 		el.addEventListener('paste', async e => {
 			const files = e?.clipboardData?.files;
-			for(const file of files || []) {
-				const inputs = this.files._inputs;
+			if(!files?.length || !this.files) {
+				return;
+			}
+			const inputs = this.files._inputs;
+			const inputFiles = this.files._files;
+			for(const file of files) {
 				for(let i = 0, len = inputs.length; i < len; ++i) {
 					const input = inputs[i];
 					if(!input.hasFile) {
-						await input.addUrlFile(URL.createObjectURL(file), file);
+						// Read the file directly. Reloading it through a blob: URL is not possible
+						// on boards whose CSP does not allow blob: connections (e.g. endchan.org).
+						inputFiles[i] = file;
+						await FileInput._readDroppedFile(input, file);
+						DollchanAPI.notify('filechange', inputFiles);
 						break;
 					}
 				}
