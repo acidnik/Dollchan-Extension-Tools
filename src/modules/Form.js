@@ -289,16 +289,12 @@ class PostForm {
             this._pBtn[+this.isBottom].after(this.pForm);
         }
         this.isHidden = needToHide;
-        // How the form gets its width differs by layout. The rebuilt form has no content of its own that
-        // could size it, so its container carries 70% of the page and the form fills it; the board's own
-        // form is hugged by the textarea, which already has a real width of its own.
-        if(Cfg.altLayout) {
-            this.pForm.style.setProperty('width', isQuick ? '100%' : 'min(100%, max(500px, 70%))');
-            this.form?.style.setProperty('width', '100%', 'important');
-        } else {
-            this.pForm.style.setProperty('width', 'fit-content');
-            this.pForm.style.setProperty('max-width', '100%');
-        }
+        // The width lives in the textarea (see setTextaSize), and the container only hugs the content — in both
+        // layouts, so the block around the form is as wide as the message field and never reserves room the
+        // fields do not fill. The rebuilt form has no content of its own to be sized by, which is exactly why
+        // the textarea carries the width there as well.
+        this.pForm.style.setProperty('width', 'fit-content');
+        this.pForm.style.setProperty('max-width', '100%');
         // The container is now a narrower block than the area it sits in, so it needs the centring the board
         // had: without it the reply form ends up pushed against the left edge
         this.pForm.style.setProperty('margin', '0 auto');
@@ -673,13 +669,11 @@ class PostForm {
         this._pBtn = [this.pArea[0].firstChild, this.pArea[1].firstChild];
         this._pBtn[0].firstElementChild.onclick = e => this.showMainReply(false, e);
         this._pBtn[1].firstElementChild.onclick = e => this.showMainReply(true, e);
-        // The quick reply box is the board's own element, and endchan pins it to fit-content with
-        // !important — our marker class outranks that rule, so the form keeps its width under a post in both
-        // layouts: the rebuilt one and the board's own
+        // The quick reply box is the board's own element; its fit-content width is what we want, since everything
+        // inside it hugs the textarea
         this.qArea = nav.parseHTML(`<div style="display: none; ${ Cfg.replyWinX }; ${
             Cfg.replyWinY }; z-index: ${ ++topWinZ };" id="de-win-reply" class="${
-            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }${
-            Cfg.altLayout ? ' de-reply-wide' : '' }"></div>`);
+            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }"></div>`);
         this.isBottom = Cfg.addPostForm === 1;
         this.setReply(false, !aib.t || Cfg.addPostForm > 1);
     }
@@ -874,14 +868,12 @@ class PostForm {
         // A zero-height full-width flex item breaks the line: the canvas opens under the controls, and its
         // container keeps the width the board gave it (otherwise the canvas stretches to the row)
         const drawBreak = wPaint ? mk('div', 'de-altbreak') : null;
-        // The reply textarea spans the form: it is the widest thing in it, and a width taken from the caption
-        // block or from a fixed setting looks wrong next to a rebuilt layout
-        // The form itself gets the width: the board's form is an inline-block, so it shrinks to its content
-        // and a percentage on the table inside it would resolve against nothing
+        // The textarea keeps the width setTextaSize gave it (the saved one, or 70% of the viewport): the size
+        // settings are shared by both layouts, and the textarea is still the widest thing in a rebuilt row, so
+        // it is what the form ends up as wide as
         form.classList.add('de-altform-form');
         const txtaCell = cell(txta);
         txtaCell.classList.add('de-altcell-wide');
-        txta.style.setProperty('width', '100%', 'important');
         // The answer button is the point of the form, so it gets its own look and a larger font
         subm.classList.add('de-altform-submit');
         // The board's links keep their own line breaks: it is a stack of paragraphs, not one long line, and

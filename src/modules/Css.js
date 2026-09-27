@@ -317,26 +317,11 @@ function scriptCSS() {
     .de-file-txt-wrap { display: inline-flex; width: 100%; }
     .de-file-utils { display: inline-flex; align-items: center; float: none; }
     .de-file-wrap { display: flex; align-items: center; }
-    /* The rebuilt form has no content that could size it, so its container carries 70% of the page and the form
-       fills it. In the board's own layout the textarea carries a width of its own (see Form.js) and everything
-       else hugs it. 70% of the page, never narrower than 500px and never past the screen: on a narrow screen (a
-       phone) the same expression gives the full width, so no media query is needed. */
-    #de-pform > form.de-altform-form {
-        min-width: 70%;
-        min-width: min(100%, max(500px, 70%));
-        box-sizing: border-box;
-    }
     /* Under a post the form is moved into the board's own reply box, and the board pins that box to
        fit-content with !important (endchan), so the form inside measured itself against a collapsed
        parent and fell back to its 500px floor. The box takes the form's width instead, and the form fills
        the box, so the form comes out the same width in both places. Our marker class is what outranks the
        board's rule: dE itself asks for width: auto !important on that box. */
-    #de-win-reply.de-win-inpost.de-reply-wide {
-        min-width: 70% !important;
-        min-width: min(100%, max(500px, 70%)) !important;
-        box-sizing: border-box;
-    }
-    #de-win-reply.de-win-inpost.de-reply-wide #de-pform > form { width: 100%; min-width: 0; }
     .de-altform { width: 100%; border-collapse: collapse; }
     .de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
     /* min-width: 0 lets a cell shrink below its content: a flex item otherwise refuses to go under its

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.28
+// @version         24.9.16.29
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -27,8 +27,8 @@
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.28';
-const commit = '1173e8b';
+const version = '24.9.16.29';
+const commit = '464ed13';
 
 /* ==[ GlobalVars.js ]== */
 
@@ -8990,16 +8990,12 @@ class PostForm {
             this._pBtn[+this.isBottom].after(this.pForm);
         }
         this.isHidden = needToHide;
-        // How the form gets its width differs by layout. The rebuilt form has no content of its own that
-        // could size it, so its container carries 70% of the page and the form fills it; the board's own
-        // form is hugged by the textarea, which already has a real width of its own.
-        if(Cfg.altLayout) {
-            this.pForm.style.setProperty('width', isQuick ? '100%' : 'min(100%, max(500px, 70%))');
-            this.form?.style.setProperty('width', '100%', 'important');
-        } else {
-            this.pForm.style.setProperty('width', 'fit-content');
-            this.pForm.style.setProperty('max-width', '100%');
-        }
+        // The width lives in the textarea (see setTextaSize), and the container only hugs the content — in both
+        // layouts, so the block around the form is as wide as the message field and never reserves room the
+        // fields do not fill. The rebuilt form has no content of its own to be sized by, which is exactly why
+        // the textarea carries the width there as well.
+        this.pForm.style.setProperty('width', 'fit-content');
+        this.pForm.style.setProperty('max-width', '100%');
         // The container is now a narrower block than the area it sits in, so it needs the centring the board
         // had: without it the reply form ends up pushed against the left edge
         this.pForm.style.setProperty('margin', '0 auto');
@@ -9374,13 +9370,11 @@ class PostForm {
         this._pBtn = [this.pArea[0].firstChild, this.pArea[1].firstChild];
         this._pBtn[0].firstElementChild.onclick = e => this.showMainReply(false, e);
         this._pBtn[1].firstElementChild.onclick = e => this.showMainReply(true, e);
-        // The quick reply box is the board's own element, and endchan pins it to fit-content with
-        // !important — our marker class outranks that rule, so the form keeps its width under a post in both
-        // layouts: the rebuilt one and the board's own
+        // The quick reply box is the board's own element; its fit-content width is what we want, since everything
+        // inside it hugs the textarea
         this.qArea = nav.parseHTML(`<div style="display: none; ${ Cfg.replyWinX }; ${
             Cfg.replyWinY }; z-index: ${ ++topWinZ };" id="de-win-reply" class="${
-            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }${
-            Cfg.altLayout ? ' de-reply-wide' : '' }"></div>`);
+            aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }"></div>`);
         this.isBottom = Cfg.addPostForm === 1;
         this.setReply(false, !aib.t || Cfg.addPostForm > 1);
     }
@@ -9575,14 +9569,12 @@ class PostForm {
         // A zero-height full-width flex item breaks the line: the canvas opens under the controls, and its
         // container keeps the width the board gave it (otherwise the canvas stretches to the row)
         const drawBreak = wPaint ? mk('div', 'de-altbreak') : null;
-        // The reply textarea spans the form: it is the widest thing in it, and a width taken from the caption
-        // block or from a fixed setting looks wrong next to a rebuilt layout
-        // The form itself gets the width: the board's form is an inline-block, so it shrinks to its content
-        // and a percentage on the table inside it would resolve against nothing
+        // The textarea keeps the width setTextaSize gave it (the saved one, or 70% of the viewport): the size
+        // settings are shared by both layouts, and the textarea is still the widest thing in a rebuilt row, so
+        // it is what the form ends up as wide as
         form.classList.add('de-altform-form');
         const txtaCell = cell(txta);
         txtaCell.classList.add('de-altcell-wide');
-        txta.style.setProperty('width', '100%', 'important');
         // The answer button is the point of the form, so it gets its own look and a larger font
         subm.classList.add('de-altform-submit');
         // The board's links keep their own line breaks: it is a stack of paragraphs, not one long line, and
@@ -19056,26 +19048,11 @@ function scriptCSS() {
     .de-file-txt-wrap { display: inline-flex; width: 100%; }
     .de-file-utils { display: inline-flex; align-items: center; float: none; }
     .de-file-wrap { display: flex; align-items: center; }
-    /* The rebuilt form has no content that could size it, so its container carries 70% of the page and the form
-       fills it. In the board's own layout the textarea carries a width of its own (see Form.js) and everything
-       else hugs it. 70% of the page, never narrower than 500px and never past the screen: on a narrow screen (a
-       phone) the same expression gives the full width, so no media query is needed. */
-    #de-pform > form.de-altform-form {
-        min-width: 70%;
-        min-width: min(100%, max(500px, 70%));
-        box-sizing: border-box;
-    }
     /* Under a post the form is moved into the board's own reply box, and the board pins that box to
        fit-content with !important (endchan), so the form inside measured itself against a collapsed
        parent and fell back to its 500px floor. The box takes the form's width instead, and the form fills
        the box, so the form comes out the same width in both places. Our marker class is what outranks the
        board's rule: dE itself asks for width: auto !important on that box. */
-    #de-win-reply.de-win-inpost.de-reply-wide {
-        min-width: 70% !important;
-        min-width: min(100%, max(500px, 70%)) !important;
-        box-sizing: border-box;
-    }
-    #de-win-reply.de-win-inpost.de-reply-wide #de-pform > form { width: 100%; min-width: 0; }
     .de-altform { width: 100%; border-collapse: collapse; }
     .de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
     /* min-width: 0 lets a cell shrink below its content: a flex item otherwise refuses to go under its
