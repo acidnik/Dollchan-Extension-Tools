@@ -202,9 +202,12 @@ outcome. Drive the real page headlessly instead — minutes instead of an hour o
   load the generated bundle, not `src/modules/*`.
 - The injected bundle runs in the main world without `GM_*`/`chrome.storage`, so Dollchan falls back to
   `localStorage` and `scriptHandler: 'In-page'` (`Browser.js`). That covers UI/form/post bugs but never
-  privileged paths (`GM_xmlhttpRequest`, `chrome.runtime`). A content script is also exempt from the page's
-  CSP, so a CSP-related bug can hit the userscript build while the browser extension keeps working — check
-  which build the user runs before assuming.
+  privileged paths (`GM_xmlhttpRequest`, `chrome.runtime`).
+- With a board CSP, which build is affected depends on the kind of request. `fetch`/`XMLHttpRequest`
+  **initiated by a content script** are not subject to the page's CSP — that is why the Ctrl+V blob bug hit
+  the userscript only. A **subresource of an element living in the page document** (`<img>`/`<video>` with a
+  `blob:` src) is checked against the document's CSP and is blocked in the extension too: endchan.org blocks
+  video previews in both builds that way. Do not assume "extension = CSP-safe".
 - Assert a **language-independent** postcondition (a class, an input value, a popup id): `readCfg()` picks
   the language from `navigator.language`, so text assertions depend on the context locale.
 - Always collect `console` + `pageerror` + `requestfailed`: **CSP violations exist only there**, as
