@@ -10,6 +10,7 @@ tools/
   repro-file-paste.mjs     # attach a file to the postform on a real board (Ctrl+V / drag&drop)
   probe-blob-csp.mjs       # minimal probe: fetch/XHR of a blob: URL, with and without a CSP
   probe-newpost.mjs        # simulate a post arriving through the thread updater
+  probe-reply-refresh.mjs  # send a reply to a board that shows it with a lag, see if it appears by itself
   probe-ext/               # 15-line MV3 extension used by the probe (content script = isolated world)
 ```
 
@@ -140,6 +141,53 @@ Traps this harness had to work around — all of them silent, none of them obvio
   key code for inputs and textareas), so the probe blurs the active element first.
 - `className` is an `SVGAnimatedString` on the `<svg>` post buttons: read `baseVal`, not the object itself,
   or every hidden-state check silently answers "not hidden".
+
+## probe-reply-refresh.mjs
+
+Drives a reply **submit** on a board where the thread page lags behind the stored post, and reports whether the
+reply appeared without a manual refresh. Both responses are controlled: the POST is answered locally (the
+payload is the one a LynxChan board returns on success, `{"status":"ok","data":"<post number>"}`, which is
+where the app takes the number from), and the thread page is served without the new post for the first
+`STALE_MS` and with it afterwards.
+
+```sh
+node tools/probe-reply-refresh.mjs                        # check the current build
+BUNDLE=/tmp/before.js node tools/probe-reply-refresh.mjs  # the same run against an older build
+STALE_MS=6000 node tools/probe-reply-refresh.mjs          # a lag longer than the retries cover
+```
+
+| Env | Default | Meaning |
+| --- | --- | --- |
+| `BOARD_URL` | `https://endchan.org/test/res/6520.html` | Thread to reply to — the test board needs a captcha, so nothing can be created even if a request escaped |
+| `BUNDLE` | `src/Dollchan_Extension_Tools.es6.user.js` | Bundle to inject |
+| `STALE_MS` | `1500` | How long the board serves the thread without the new post |
+| `HEADLESS`, `TIMEOUT` | `1`, `60000` | Browser mode, navigation timeout |
+
+Exit code: `0` when the reply appeared by itself, `1` when it did not, `2` on a setup failure.
+
+Recorded runs (2026, `test/res/6520.html`), which show what the retries are worth:
+
+| run | thread fetches after the submit | verdict |
+| --- | --- | --- |
+| bundle from before the fix | one pair at +0 ms, then nothing until the updater tick at +20 s | exit 1 — the reply only appeared on a later update |
+| fixed bundle, `STALE_MS=1500` | pair at +11 ms, retries at +1.0 s and +2.0 s | exit 0 — the reply appeared by itself in ~2 s |
+| fixed bundle, `STALE_MS=6000` | pair + exactly 3 retries (+1, +2, +3 s) | exit 1 — the retries ran out, a lag this long still needs the updater |
+
+Traps found while building it:
+
+- **A successful `Thread.loadNewPosts()` resolves with the `AjaxError.Success` object**, not with null, so an
+  `if(!err)` guard is always false and the retry never runs. Compare against `null`/`AjaxError.Success`
+  explicitly instead — this mistake made the first version of the fix a no-op.
+- **One logical load is two requests**: `AjaxCache` repeats the request with `?nocache=` when the answer has
+  no `Cache-Control`, and the app uses only the second response. Counting requests as attempts, or serving
+  the "fresh" content only to the first of the pair, gives misleading results — model the lag in time.
+- A fabricated post must keep everything the app reads: `Post`'s constructor wants `aib.qPostRef`
+  (`.linkQuote` on LynxChan) and throws on a null, so stripping links from a cloned post breaks the import.
+- The reply POST does **not** go to the form's `action`: LynxChan posts to `/.api/replyThread`, not to
+  `/replyThread.js`. Route by method or by what the app really requests, otherwise the POST escapes to the
+  live board.
+- On LynxChan the post number comes from the deletion checkbox name, `board-thread-post`
+  (`getPNum`), not from the element's `id`.
 
 ## Adapting these to another bug
 

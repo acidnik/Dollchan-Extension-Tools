@@ -86,8 +86,18 @@ async function checkSubmit(data) {
 	}
 	if(aib.t) {
 		Post.clearMarks();
-		Thread.first.loadNewPosts().then(() => AjaxError.Success, err => err).then(err => {
-			infoLoadErrors(err);
+		// endchan (LynxChan) serves the thread as it was rendered a moment before the reply was stored, so
+		// the post can be missing from the response right after the submit. It carries the new post number,
+		// so ask for the thread again — up to three times, a second apart — while the post is not here yet.
+		// A successful load resolves with null, an unsuccessful one with the error: the check below is about
+		// the truthiness of a failure and nothing else.
+		const loadPosts = () => Thread.first.loadNewPosts().then(() => null, err => err);
+		loadPosts().then(async err => {
+			for(let i = 0; !err && postNum && !pByNum.has(postNum) && i < 3; ++i) {
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				err = await loadPosts();
+			}
+			infoLoadErrors(err ?? AjaxError.Success);
 			if(Cfg.scrAfterRep) {
 				scrollTo(0, deWindow.pageYOffset + Thread.first.last.el.getBoundingClientRect().top);
 			}
