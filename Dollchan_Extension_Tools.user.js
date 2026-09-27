@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.8
+// @version         24.9.16.9
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -8494,8 +8494,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
   var _this24 = this;
   var _marked = _regenerator().m(getFormElements);
-  var version = '24.9.16.8';
-  var commit = '226520c';
+  var version = '24.9.16.9';
+  var commit = '1acb452';
 
 
   var doc = deWindow.document;
@@ -17742,6 +17742,17 @@ this.disableSpells();
           }
           return el;
         };
+        var withLabel = function withLabel(el) {
+          var _el$parentElement;
+          if (!el || el.closest('label') || (_el$parentElement = el.parentElement) !== null && _el$parentElement !== void 0 && _el$parentElement.querySelector('label')) {
+            return [el];
+          }
+          var tr = el.closest('tr');
+          var label = tr && _toConsumableArray(tr.children).find(function (cell) {
+            return (cell.textContent || '').trim() && !cell.querySelector('input, select, textarea, button');
+          });
+          return label ? [].concat(_toConsumableArray(label.childNodes), [el]) : [el];
+        };
         var row = function row() {
           for (var _len7 = arguments.length, cells = new Array(_len7), _key5 = 0; _key5 < _len7; _key5++) {
             cells[_key5] = arguments[_key5];
@@ -17852,7 +17863,7 @@ this.disableSpells();
         subm.classList.add('de-altform-submit');
         var linkCell = cell.apply(void 0, _toConsumableArray(boardEls));
         linkCell.classList.add('de-altcell-links');
-        var rows = [row(cell(name), cell(subj), cell(sageBtn || mail)), row(cell(groupOf(spoiler)), cell(groupOf(flag))), row(fileCell, cell(video)), row(cell(markup, this._getFormHelpEl())), row(txtaCell), capRow, row(cell(subm), cell(passw)), row(linkCell), row(cell.apply(void 0, _toConsumableArray(drawing).concat([drawLink, drawBreak, wPaint])))].filter(Boolean);
+        var rows = [row(cell.apply(void 0, _toConsumableArray(withLabel(name))), cell.apply(void 0, _toConsumableArray(withLabel(subj))), cell.apply(void 0, _toConsumableArray(withLabel(sageBtn || mail)))), row(cell.apply(void 0, _toConsumableArray(withLabel(groupOf(spoiler)))), cell.apply(void 0, _toConsumableArray(withLabel(groupOf(flag))))), row(fileCell, cell.apply(void 0, _toConsumableArray(withLabel(video)))), row(cell(markup, this._getFormHelpEl())), row(txtaCell), capRow, row(cell(subm), cell.apply(void 0, _toConsumableArray(withLabel(passw)))), row(linkCell), row(cell.apply(void 0, _toConsumableArray(drawing).concat([drawLink, drawBreak, wPaint])))].filter(Boolean);
         var layout = mk(isTable ? 'table' : 'div', 'de-altform');
         layout.append.apply(layout, _toConsumableArray(rows));
         form.prepend(layout);

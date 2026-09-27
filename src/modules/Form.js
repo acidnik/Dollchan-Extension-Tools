@@ -627,6 +627,20 @@ class PostForm {
             }
             return el;
         };
+        // A board can keep a field's label in a neighbouring cell of the field's own row — endchan has
+        // <th>Name</th> next to <td><div><input></div></td> — so moving the input alone leaves the label
+        // behind in the board's hidden layout, and the row ends up nameless. The label's content moves into
+        // our cell instead: it then lives in one place and hides together with its field. A field that already
+        // travels with its own <label> is left alone, so nothing gets labelled twice.
+        const withLabel = el => {
+            if(!el || el.closest('label') || el.parentElement?.querySelector('label')) {
+                return [el];
+            }
+            const tr = el.closest('tr');
+            const label = tr && [...tr.children].find(cell => (cell.textContent || '').trim() &&
+                !cell.querySelector('input, select, textarea, button'));
+            return label ? [...label.childNodes, el] : [el];
+        };
         const row = (...cells) => {
             const keep = cells.filter(el => el?.childElementCount);
             if(!keep.length) {
@@ -755,13 +769,13 @@ class PostForm {
         const linkCell = cell(...boardEls);
         linkCell.classList.add('de-altcell-links');
         const rows = [
-            row(cell(name), cell(subj), cell(sageBtn || mail)),
-            row(cell(groupOf(spoiler)), cell(groupOf(flag))),
-            row(fileCell, cell(video)),
+            row(cell(...withLabel(name)), cell(...withLabel(subj)), cell(...withLabel(sageBtn || mail))),
+            row(cell(...withLabel(groupOf(spoiler))), cell(...withLabel(groupOf(flag)))),
+            row(fileCell, cell(...withLabel(video))),
             row(cell(markup, this._getFormHelpEl())),
             row(txtaCell),
             capRow,
-            row(cell(subm), cell(passw)),
+            row(cell(subm), cell(...withLabel(passw))),
             row(linkCell),
             row(cell(...drawing, drawLink, drawBreak, wPaint))
         ].filter(Boolean);
