@@ -151,24 +151,28 @@ Locate behaviour before reading whole modules — the codebase is ~40k lines wit
 ## Reproducing a board bug in a real browser
 
 Do not reason a board bug out of the source: engine flags, the site's CSP and its live HTML decide the
-outcome. Drive the real page headlessly instead — minutes instead of an hour of grep. Harness:
-`tmp/blobtest/verify.mjs` (gitignored scratch; recreate from this recipe if it was cleaned up).
+outcome. Drive the real page headlessly instead — minutes instead of an hour of grep. The scripts live in
+`tools/` (`tools/README.md` documents them and the env vars):
 
-1. `npx gulp make` first — the harness loads the generated `src/Dollchan_Extension_Tools.es6.user.js`.
-2. Launch the Chromium already cached by playwright (see the `playwright-cached-chromium-smoke-test` skill
-   for the binary path), then `await page.addInitScript({ path: '<repo>/src/Dollchan_Extension_Tools.es6.user.js' })`
-   **before** `goto` — that runs the userscript in the main world.
-3. `goto` the real board (e.g. `https://endchan.org/b/`). With no `GM_*`/`chrome.storage` the script falls
-   back to `localStorage` and `scriptHandler: 'In-page'` (`Browser.js`), which is enough for UI/form/post bugs
-   but does not exercise privileged paths (`GM_xmlhttpRequest`, `chrome.runtime`).
-4. Fire the action with synthetic events where the handler reads event data — `element.click()` is not enough:
-   `new ClipboardEvent('paste', { clipboardData: dt })` with `dt.items.add(file)` reproduces Ctrl+V.
-5. Observe DOM state (`[id^="de-popup-"]`, `.de-file-txt-input`, `.de-file:not(.de-file-off)`, `.de-textarea`)
-   and always collect `console` + `pageerror` + `requestfailed`: **CSP violations exist only there**, as
-   `requestfailed <url> :: csp` plus a `console.error` naming the violated directive. That is how the Ctrl+V
-   blob bug was identified.
-6. Compare against the nearest working path (drag&drop vs paste, file picker vs URL input) — if both fail
-   identically, the bug is not in the code path you just changed.
+- `node tools/repro-file-paste.mjs` — injects the built userscript into a live board, dispatches Ctrl+V or
+  drag&drop into the reply form, and reports the form state plus `pageErrors` and `requestFailures`. Exits
+  non-zero when the form rejects the file, so it doubles as a check. `ACTION=drop` is the baseline to compare
+  against: when both paths fail identically, the bug is not in the path you just changed.
+- `node tools/probe-blob-csp.mjs` — the minimal-probe pattern: isolate one mechanism (transport × CSP ×
+  execution world) in a few lines instead of reasoning about it. Use this shape whenever a request fails
+  oddly, before changing app code.
+- Both resolve playwright and a cached Chromium themselves, and both need `npx gulp make` first because they
+  load the generated bundle, not `src/modules/*`.
+- The injected bundle runs in the main world without `GM_*`/`chrome.storage`, so Dollchan falls back to
+  `localStorage` and `scriptHandler: 'In-page'` (`Browser.js`). That covers UI/form/post bugs but never
+  privileged paths (`GM_xmlhttpRequest`, `chrome.runtime`). A content script is also exempt from the page's
+  CSP, so a CSP-related bug can hit the userscript build while the browser extension keeps working — check
+  which build the user runs before assuming.
+- Assert a **language-independent** postcondition (a class, an input value, a popup id): `readCfg()` picks
+  the language from `navigator.language`, so text assertions depend on the context locale.
+- Always collect `console` + `pageerror` + `requestfailed`: **CSP violations exist only there**, as
+  `requestfailed <url> :: csp` plus a `console.error` naming the violated directive. That is how the Ctrl+V
+  blob bug was identified.
 
 ## Testing (manual)
 

@@ -1,0 +1,12 @@
+{
+	"manifest_version": 3,
+	"name": "Dollchan blob transport probe",
+	"description": "Example instrumentation extension: reports whether fetch/XHR can read a blob: URL from an isolated world.",
+	"version": "1.0",
+	"host_permissions": ["http://127.0.0.1/*", "http://localhost/*"],
+	"content_scripts": [{
+		"matches": ["http://127.0.0.1/*", "http://localhost/*"],
+		"run_at": "document_idle",
+		"js": ["content.js"]
+	}]
+}
