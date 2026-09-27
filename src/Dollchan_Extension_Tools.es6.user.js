@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.4
+// @version         24.9.16.5
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -27,8 +27,8 @@
 (function deMainFuncInner(deWindow, FormData, scrollTo, localData) {
 'use strict';
 
-const version = '24.9.16.4';
-const commit = '6e19721';
+const version = '24.9.16.5';
+const commit = '7269568';
 
 /* ==[ GlobalVars.js ]== */
 
@@ -143,6 +143,7 @@ const defaultCfg = {
 	captchaLang : 1,    // forced captcha input language [0=off, 1=en, 2=ru]
 	addTextBtns : 1,    // text markup buttons [0=off, 1=graphics, 2=text, 3=usual]
 	txtBtnsLoc  : 1,    //    located at [0=top, 1=bottom]
+	altLayout   : 0,    // alternative reply form layout, ignores txtBtnsLoc
 	userPassw   : 1,    // user password
 	passwValue  : '',   //    value
 	userName    : 0,    // user name
@@ -650,6 +651,10 @@ const Lng = {
 			'Внизу',
 			'At bottom',
 			'Знизу'],
+		altLayout: [
+			'Альтернативная компоновка формы ответа (игнорирует размещение кнопок разметки)',
+			'Alternative reply form layout (ignores the markup buttons placement)',
+			'Альтернативне компонування форми відповіді (ігнорує розміщення кнопок розмітки)'],
 		userPassw: [
 			'Постоянный пароль',
 			'Fixed password',
@@ -1535,6 +1540,14 @@ const Lng = {
 		'Загружаются файлы',
 		'Loading files',
 		'Завантажуються файли'],
+	formHelp: [
+		'Справка по разметке',
+		'Formatting help',
+		'Довідка з розмітки'],
+	openCanvas: [
+		'Открыть',
+		'Open',
+		'Відкрити'],
 	cantLoad: [
 		'Не могу загрузить',
 		'Can\'t load',
@@ -5123,6 +5136,7 @@ const CfgWindow = {
 				${ postform.captcha.textEl ? `${ this._getSel('captchaLang') }<br>` : '' }` : '' }
 			${ !aib.noMarkupBtns && postform.txta ? `${ this._getSel('addTextBtns') }
 				${ !aib._4chan ? this._getBox('txtBtnsLoc') : '' }<br>` : '' }
+			${ this._getBox('altLayout', true) }<br>
 			${ postform.passw ? `${ this._getInp('passwValue', false, 9) }
 				${ this._getBox('userPassw') }<input type="button"` +
 				` id="de-cfg-button-pass" class="de-cfg-button" value="${ Lng.change[lang] }"><br>` : '' }
@@ -5258,7 +5272,7 @@ const CfgWindow = {
 			'input[info="sendErrNotif"]', 'input[info="scrAfterRep"]', 'select[info="fileInputs"]'
 		]);
 		fn(Cfg.addSageBtn, ['input[info="saveSage"]']);
-		fn(Cfg.addTextBtns, ['input[info="txtBtnsLoc"]']);
+		fn(Cfg.addTextBtns && !Cfg.altLayout, ['input[info="txtBtnsLoc"]']);
 		fn(Cfg.hotKeys, ['input[info="loadPages"]']);
 	},
 	// Updates row counter in spells editor
@@ -8795,17 +8809,35 @@ class PostForm {
 		this.addMarkupPanel();
 		this.setPlaceholders();
 		this._initCaptcha();
+		// Browsers read a captcha or a nickname field sitting next to a filled password as a login form, and
+		// Firefox then offers its password manager on the captcha. A plain opt-out is ignored there, so the
+		// fields state what they are and leave nothing for the browser to guess.
+		if(this.form) {
+			this.form.autocomplete = 'off';
+		}
+		if(this.passw) {
+			this.passw.autocomplete = 'off';
+		}
+		if(this.name) {
+			this.name.autocomplete = 'nickname';
+		}
+		if(this.mail) {
+			this.mail.autocomplete = 'email';
+		}
 		this._initSubmit();
 		aib.updateSubmitBtn(this.subm);
 		if(Cfg.ajaxPosting) {
 			this._initAjaxPosting();
+		}
+		if(Cfg.altLayout) {
+			this._applyAltLayout();
 		}
 		if(Cfg.addSageBtn && this.mail) {
 			PostForm.hideField(this.mail.closest('label') || this.mail);
 			setTimeout(() => this.toggleSage(), 0);
 		}
 		if(Cfg.noPassword && this.passw) {
-			$hide(this.passw.closest(aib.qFormTr));
+			$hide(PostForm.getFieldWrap(this.passw));
 		}
 		if(Cfg.noName && this.name) {
 			PostForm.hideField(this.name);
@@ -8820,6 +8852,12 @@ class PostForm {
 			setTimeout(PostForm.setUserPassw, 0);
 		}
 	}
+	// The element wrapping a single form field: the board's own row, or the cell of the alternative layout.
+	// The app hides and finds fields per wrapper (hideField, files.fileTr, captcha.parentEl), and in the
+	// alternative layout a form row can hold several fields, so the nearest wrapper is what those need.
+	static getFieldWrap(el) {
+		return el.closest(`${ aib.qFormTr }, .de-altcell`);
+	}
 	static hideField(el) {
 		const els = el.parentNode.children;
 		let hideTr = true;
@@ -8829,7 +8867,7 @@ class PostForm {
 				break;
 			}
 		}
-		$toggle(hideTr ? el.closest(aib.qFormTr) : el);
+		$toggle(hideTr ? PostForm.getFieldWrap(el) : el);
 	}
 	static async setUserName() {
 		const el = $q('input[info="nameValue"]');
@@ -9268,7 +9306,12 @@ class PostForm {
 		(this.pForm = nav.parseHTML('<div id="de-pform" class="de-win-body"></div>'))
 			.append(this.form || '', this.oeForm || '');
 		const html = '<div class="de-parea"><div><a href="#"></a></div><hr></div>';
-		this.pArea = [$bBegin(DelForm.first.el, html), $aEnd(DelForm.first.el, html)];
+		// The bottom area belongs right after the posts: a board can keep its own block at the end of the
+		// delform, and the reply form would end up below it (endchan: navigation, layout/colour selects,
+		// delete and report buttons)
+		const bottomEl = aib.qBottomAnchor && $q(aib.qBottomAnchor, DelForm.first.el);
+		this.pArea = [$bBegin(DelForm.first.el, html),
+			bottomEl ? $bBegin(bottomEl, html) : $aEnd(DelForm.first.el, html)];
 		this._pBtn = [this.pArea[0].firstChild, this.pArea[1].firstChild];
 		this._pBtn[0].firstElementChild.onclick = e => this.showMainReply(false, e);
 		this._pBtn[1].firstElementChild.onclick = e => this.showMainReply(true, e);
@@ -9277,6 +9320,210 @@ class PostForm {
 			aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost') }"></div>`);
 		this.isBottom = Cfg.addPostForm === 1;
 		this.setReply(false, !aib.t || Cfg.addPostForm > 1);
+	}
+	// The board can bring its own help link (endchan: "help" → /.static/posting.html), otherwise the URL from
+	// the board settings is used; if neither exists the link is not drawn at all
+	_getFormHelpEl() {
+		const native = $q('a[href*=".static"]', this.form);
+		if(native) {
+			native.className = 'de-altform-help';
+		} else if(aib.formHelpUrl) {
+			const el = doc.createElement('a');
+			el.className = 'de-altform-help';
+			el.href = aib.getAbsLink(aib.formHelpUrl);
+			this.form.append(el);
+		} else {
+			return null;
+		}
+		const el = $q('.de-altform-help', this.form);
+		el.textContent = '?';
+		el.target = '_blank';
+		el.title = Lng.formHelp[lang];
+		return el;
+	}
+	// Cfg.altLayout: the reply form in this fork's row order. Every group of fields gets its own cell, the
+	// board's markup is moved into it, and the pieces the app caches by reference (files.fileTr,
+	// captcha.parentEl) are pointed at those cells, so their own logic keeps working on the rebuilt form.
+	_applyAltLayout() {
+		const { form, txta, subm, name, subj, mail, passw, video, files, captcha } = this;
+		const isTable = !!txta.closest('tr');
+		const mk = (tag, cls) => {
+			const el = doc.createElement(tag);
+			el.className = cls;
+			return el;
+		};
+		const cell = (...els) => {
+			const el = mk(isTable ? 'td' : 'div', 'de-altcell');
+			el.append(...els.filter(Boolean));
+			return el;
+		};
+		// A field travels with the wrapper carrying its own text, as long as that wrapper holds no other
+			// control: endchan keeps the spoiler checkbox in <label> Spoiler </label>, and moving the input
+			// alone left it nameless. Table cells are not moved, only their content is.
+		const groupOf = el => {
+			if(!el) {
+				return null;
+			}
+			const isSingle = node => node.querySelectorAll('input, select, textarea, button').length === 1;
+			const label = el.closest('label');
+			if(label && isSingle(label)) {
+				return label;
+			}
+			const { parentNode: parent } = el;
+			const isCell = parent && (parent.tagName === 'TD' || parent.tagName === 'TH');
+			if(parent && parent !== form && !isCell && isSingle(parent)) {
+				return parent;
+			}
+			return el;
+		};
+		const row = (...cells) => {
+			const keep = cells.filter(el => el?.childElementCount);
+			if(!keep.length) {
+				return null;
+			}
+			const el = mk(isTable ? 'tr' : 'div', 'de-altrow');
+			el.append(...keep);
+			return el;
+		};
+		// A wrapper per file input: the app hides a single empty input through it, and one shared cell would
+		// hide the whole block with its thumbnails instead
+		let fileCell = null;
+		if(files) {
+			fileCell = cell();
+			const txtArea = FileInput._isThumbMode && $q('.de-file-txt-area', form);
+			fileCell.append(...[txtArea, files.thumbsEl].filter(Boolean));
+			for(const inp of files._inputs) {
+				const holder = mk('div', 'de-altfile');
+				const parts = FileInput._isThumbMode ?
+					[inp._input] :
+					[inp._txtWrap, inp._input, inp._utils];
+				holder.append(...parts);
+				fileCell.append(holder);
+			}
+			files.fileTr = fileCell;
+		}
+		// The captcha object owns its wrapper, so it gets the new cell and its content moves there. That
+		// content is usually empty at this point: Dollchan empties the wrapper and puts the captcha back on
+		// focus, and a board can add its own after a failed post — so the cell stays even while empty, or
+		// the captcha would be restored into a cell that is not in the document
+		let capCell = null;
+		if(captcha?.parentEl) {
+			capCell = cell(...[...captcha.parentEl.childNodes]);
+			captcha.parentEl = capCell;
+		}
+		const capRow = capCell ? mk(isTable ? 'tr' : 'div', 'de-altrow') : null;
+		if(capRow) {
+			// The board stacks the captcha: image, hint, then the input with its reload button — the cell has
+			// to keep that flow instead of putting everything on one line
+			capCell.classList.add('de-altcell-cap');
+			capRow.append(capCell);
+		}
+		const markup = $id('de-txt-panel');
+		if(markup) {
+			markup.style.cssFloat = 'none';
+		}
+		const spoiler = aib.qFormSpoiler && $q(aib.qFormSpoiler, form);
+		const flag = $q('select[name="flag"]', form);
+		const drawing = [...form.querySelectorAll('#oekakiWidth, #oekakiHeight')];
+		// The board's own link that sizes and opens its canvas, and the container it draws into
+		const drawLink = $q('a[onclick*="Draw("]', form);
+		const wPaint = $id('wPaint');
+		// The file limits belong under the file block, and the board's own links — rules, management and
+		// navigation — under the answer button. endchan marks its management links with .small too, so the
+		// limits are the .small bits that are not links.
+		const ownSmalls = [...form.querySelectorAll(':scope > .small')];
+		const fileHints = ownSmalls.filter(el => !el.matches('a') && !el.querySelector('a'));
+		const boardEls = new Set([...form.querySelectorAll(':scope > p')]
+			.filter(el => !fileHints.includes(el) && el.style.display !== 'none'));
+		for(const el of ownSmalls) {
+			if(el.matches('a') || el.querySelector('a')) {
+				const para = el.closest('p') || el;
+				if(para.style.display !== 'none') {
+					boardEls.add(para);
+				}
+			}
+		}
+		if(fileHints.length) {
+			const hintWrap = mk('div', 'de-altcell-hints');
+			hintWrap.append(...fileHints);
+			if(fileCell) {
+				fileCell.append(hintWrap);
+			} else {
+				fileCell = cell(hintWrap);
+			}
+		}
+		// The drawing block: the size fields, the board's own wording as a hint, and its link turned into the
+		// button that opens the canvas
+		if(drawLink) {
+			const hint = drawLink.textContent.trim();
+			// The board's link is href="#" plus its own Draw(): a click scrolls the page to the top, and the
+			// canvas can never be closed. Ours toggles instead and lets the board size its canvas.
+			const boardDraw = drawLink.onclick;
+			drawLink.className = 'de-altform-open';
+			drawLink.textContent = Lng.openCanvas[lang];
+			drawLink.onclick = null;
+			if(hint) {
+				const hintEl = mk('span', 'de-altform-hint');
+				hintEl.textContent = hint;
+				drawing.push(hintEl);
+			}
+			if(wPaint) {
+				$hide(wPaint);
+				let isOpen = false;
+				drawLink.addEventListener('click', e => {
+					e.preventDefault();
+					if(isOpen) {
+						$hide(wPaint);
+					} else {
+						// Shown first: the board's plugin builds its canvas on a visible element
+						$show(wPaint);
+						if(!$q('canvas', wPaint)) {
+							boardDraw?.call(drawLink);
+						}
+					}
+					isOpen = !isOpen;
+				});
+			}
+		}
+		const sageBtn = Cfg.addSageBtn && mail ? this.sageBtn : null;
+		// A zero-height full-width flex item breaks the line: the canvas opens under the controls, and its
+		// container keeps the width the board gave it (otherwise the canvas stretches to the row)
+		const drawBreak = wPaint ? mk('div', 'de-altbreak') : null;
+		// The reply textarea spans the form: it is the widest thing in it, and a width taken from the caption
+		// block or from a fixed setting looks wrong next to a rebuilt layout
+		// The form itself gets the width: the board's form is an inline-block, so it shrinks to its content
+		// and a percentage on the table inside it would resolve against nothing
+		form.classList.add('de-altform-form');
+		const txtaCell = cell(txta);
+		txtaCell.classList.add('de-altcell-wide');
+		txta.style.setProperty('width', '100%', 'important');
+		// The answer button is the point of the form, so it gets its own look and a larger font
+		subm.classList.add('de-altform-submit');
+		// The board's links keep their own line breaks: it is a stack of paragraphs, not one long line, and
+		// joining them is what stretched the whole form
+		const linkCell = cell(...boardEls);
+		linkCell.classList.add('de-altcell-links');
+		const rows = [
+			row(cell(name), cell(subj), cell(sageBtn || mail)),
+			row(cell(groupOf(spoiler)), cell(groupOf(flag))),
+			row(fileCell, cell(video)),
+			row(cell(markup, this._getFormHelpEl())),
+			row(txtaCell),
+			capRow,
+			row(cell(subm), cell(passw)),
+			row(linkCell),
+			row(cell(...drawing, drawLink, drawBreak, wPaint))
+		].filter(Boolean);
+		const layout = mk(isTable ? 'table' : 'div', 'de-altform');
+		layout.append(...rows);
+		form.prepend(layout);
+		// The board's own layout stays in place but is hidden: it still carries the hidden fields and the
+		// board's own fallback submit button, and display:none does not stop them from being submitted
+		for(const el of [...form.children]) {
+			if(el !== layout) {
+				$hide(el);
+			}
+		}
 	}
 	_makeWindow() {
 		makeDraggable('reply', this.qArea, $aBegin(this.qArea, `<div class="de-win-head">
@@ -9803,7 +10050,7 @@ function readExif(data, offset, len) {
 class Files {
 	constructor(form, fileEl) {
 		this.filesCount = 0;
-		this.fileTr = fileEl.closest(aib.qFormTr);
+		this.fileTr = PostForm.getFieldWrap(fileEl);
 		this.onchange = null;
 		this._form = form;
 		this._inputs = [];
@@ -10364,7 +10611,7 @@ class Captcha {
 		this.hasCaptcha = true;
 		this.textEl = null;
 		this.tNum = initNum;
-		this.parentEl = el.closest(aib.qFormTr) || aib.getCaptchaParent(el);
+		this.parentEl = PostForm.getFieldWrap(el) || aib.getCaptchaParent(el);
 		this.isAdded = false;
 		this._isHcap = !!$q('.h-captcha', this.parentEl);
 		this._isRecap = this._isHcap || !!$q('[id*="recaptcha"], [class*="recaptcha"]', this.parentEl);
@@ -10441,7 +10688,10 @@ class Captcha {
 		img.onclick = () => this.refreshCaptcha(true);
 	}
 	initTextEl() {
-		this.textEl.autocomplete = 'off';
+		// "one-time-code" instead of "off": browsers ignore the plain opt-out when they take the form for a
+		// login — the captcha sits next to a filled password — and then offer their password manager on it.
+		// This token says what the field really is: a code, not a username.
+		this.textEl.autocomplete = 'one-time-code';
 		if(!aib.formHeaders && (aib.multiFile || Cfg.fileInputs !== 2)) {
 			this.textEl.placeholder = Lng.captcha[lang];
 		}
@@ -15545,6 +15795,13 @@ class BaseBoard {
 		// Query paths
 		this.cReply = 'reply';
 		this.qBan = null;
+		// Board's own page explaining its markup; the alternative reply form layout links to it, and the link
+		// is not drawn at all when this is null and the board's form brings no help link of its own
+		this.formHelpUrl = null;
+		// The bottom reply area is inserted before this element when the delform ends with the board's own
+		// block — navigation links, layout and colour selects, delete and report buttons — and not with the
+		// posts themselves, which would otherwise leave the reply form below all of that
+		this.qBottomAnchor = null;
 		this.qClosed = null;
 		this.qDelBtn = 'input[type="submit"]';
 		this.qDelForm = '#delform, form[name="delform"]';
@@ -16186,10 +16443,15 @@ function getImageBoard(checkDomains, checkEngines) {
 			super(...args);
 			this.cReply = 'innerPost';
 			this.firstPage = 1;
+			// Endchan's own page describing its markup syntax, used by the alternative reply form layout
+			this.formHelpUrl = '/.static/posting.html';
 			this.formParent = 'threadId';
 			this.hasCatalog = true;
 			this.jsonSubmit = true;
 			this.multiFile = true;
+			// The page ends with the navigation links and the layout/colour/delete/report block, so the
+			// bottom reply area has to be anchored to the point right after the posts
+			this.qBottomAnchor = 'a[name="bottom"]';
 			this.qDelBtn = '#deleteFormButton';
 			this.qDelForm = 'form[action$="contentActions.js"]';
 			this.qError = '#errorLabel, #labelMessage';
@@ -18698,6 +18960,30 @@ function scriptCSS() {
 	.de-file-txt-wrap { display: inline-flex; width: 100%; }
 	.de-file-utils { display: inline-flex; align-items: center; float: none; }
 	.de-file-wrap { display: flex; align-items: center; }
+	/* 70% of the page, never narrower than 500px, never past the screen: on a narrow screen (a phone) the
+	   same expression gives the full width, so no media query is needed. The first width is a fallback for
+	   browsers without min()/max(). */
+	.de-altform-form {
+		width: 70%;
+		max-width: 100%;
+		width: min(100%, max(500px, 70%));
+		box-sizing: border-box;
+	}
+	.de-altform { width: 100%; border-collapse: collapse; }
+	.de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
+	.de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+	.de-altfile { display: inline-flex; align-items: center; }
+	.de-altform-help { margin-left: 4px; font: bold 16px/16px sans-serif; text-decoration: underline; }
+	.de-altcell-cap { display: block; }
+	.de-altcell-wide { flex: 1 1 100%; }
+	.de-altcell-hints { flex: 1 1 100%; }
+	.de-altcell-links { display: block; }
+	.de-altcell-links > * { display: block; margin: 1px 0; }
+	.de-altcell-hints > p { margin: 1px 0; }
+	.de-altform-hint { opacity: .7; }
+	.de-altbreak { flex: 1 1 100%; height: 0; }
+	.de-altform-open { margin-left: 4px; padding: 1px 6px; border: 1px solid grey; font: bold 12px sans-serif; }
+	.de-altform-submit { padding: 4px 14px !important; font-size: 130% !important; font-weight: bold; }
 
 	/* Reply form */
 	.de-parea { text-align: center; clear: both; }

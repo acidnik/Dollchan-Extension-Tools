@@ -738,6 +738,7 @@ const CfgWindow = {
 				${ postform.captcha.textEl ? `${ this._getSel('captchaLang') }<br>` : '' }` : '' }
 			${ !aib.noMarkupBtns && postform.txta ? `${ this._getSel('addTextBtns') }
 				${ !aib._4chan ? this._getBox('txtBtnsLoc') : '' }<br>` : '' }
+			${ this._getBox('altLayout', true) }<br>
 			${ postform.passw ? `${ this._getInp('passwValue', false, 9) }
 				${ this._getBox('userPassw') }<input type="button"` +
 				` id="de-cfg-button-pass" class="de-cfg-button" value="${ Lng.change[lang] }"><br>` : '' }
@@ -873,7 +874,7 @@ const CfgWindow = {
 			'input[info="sendErrNotif"]', 'input[info="scrAfterRep"]', 'select[info="fileInputs"]'
 		]);
 		fn(Cfg.addSageBtn, ['input[info="saveSage"]']);
-		fn(Cfg.addTextBtns, ['input[info="txtBtnsLoc"]']);
+		fn(Cfg.addTextBtns && !Cfg.altLayout, ['input[info="txtBtnsLoc"]']);
 		fn(Cfg.hotKeys, ['input[info="loadPages"]']);
 	},
 	// Updates row counter in spells editor

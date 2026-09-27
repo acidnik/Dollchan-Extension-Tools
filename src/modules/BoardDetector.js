@@ -268,10 +268,15 @@ function getImageBoard(checkDomains, checkEngines) {
 			super(...args);
 			this.cReply = 'innerPost';
 			this.firstPage = 1;
+			// Endchan's own page describing its markup syntax, used by the alternative reply form layout
+			this.formHelpUrl = '/.static/posting.html';
 			this.formParent = 'threadId';
 			this.hasCatalog = true;
 			this.jsonSubmit = true;
 			this.multiFile = true;
+			// The page ends with the navigation links and the layout/colour/delete/report block, so the
+			// bottom reply area has to be anchored to the point right after the posts
+			this.qBottomAnchor = 'a[name="bottom"]';
 			this.qDelBtn = '#deleteFormButton';
 			this.qDelForm = 'form[action$="contentActions.js"]';
 			this.qError = '#errorLabel, #labelMessage';

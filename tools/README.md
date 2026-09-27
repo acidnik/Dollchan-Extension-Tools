@@ -150,6 +150,10 @@ payload is the one a LynxChan board returns on success, `{"status":"ok","data":"
 where the app takes the number from), and the thread page is served without the new post for the first
 `STALE_MS` and with it afterwards.
 
+It also reports where the reply area ended up — after the posts, above the navigation and delete/report block —
+and what the POST body carried, which is what catches an insertion point that drags the reply form into the
+board's own form.
+
 ```sh
 node tools/probe-reply-refresh.mjs                        # check the current build
 BUNDLE=/tmp/before.js node tools/probe-reply-refresh.mjs  # the same run against an older build
@@ -188,6 +192,16 @@ Traps found while building it:
   live board.
 - On LynxChan the post number comes from the deletion checkbox name, `board-thread-post`
   (`getPNum`), not from the element's `id`.
+- **Moving the reply area up to the posts puts it inside the board's own form**: endchan's
+  `form[action$="contentActions.js"]` spans the posts and the whole bottom block, so with
+  `Cfg.addPostForm === 1` the reply form is nested in it (in the default hidden mode nothing is nested). The
+  probe therefore checks that the reply POST keeps only our fields, that the board's checkboxes stay with its
+  own form, and that nothing of ours matches the markers its scripts collect (`.deletionCheckBox`), which they
+  do fetch by class (`getElementsByClassName`), not with DOM-wide input queries.
+- **A hand-made `DESU_Config` must have a complete shape.** `CfgSaver.saveObj(domain, fn)` hands the *stored*
+  domain object straight to `fn`, and the submit path does `loadedCfg.stats.reply++` — seeding a config that
+  carries only the setting under test kills the submit with "Cannot read properties of undefined (reading
+  'reply')" before any refresh logic runs. `ADD_POST_FORM=1` therefore seeds `stats` too.
 
 ## Adapting these to another bug
 

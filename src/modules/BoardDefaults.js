@@ -12,6 +12,13 @@ class BaseBoard {
 		// Query paths
 		this.cReply = 'reply';
 		this.qBan = null;
+		// Board's own page explaining its markup; the alternative reply form layout links to it, and the link
+		// is not drawn at all when this is null and the board's form brings no help link of its own
+		this.formHelpUrl = null;
+		// The bottom reply area is inserted before this element when the delform ends with the board's own
+		// block — navigation links, layout and colour selects, delete and report buttons — and not with the
+		// posts themselves, which would otherwise leave the reply form below all of that
+		this.qBottomAnchor = null;
 		this.qClosed = null;
 		this.qDelBtn = 'input[type="submit"]';
 		this.qDelForm = '#delform, form[name="delform"]';

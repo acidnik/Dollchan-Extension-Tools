@@ -6,7 +6,7 @@
 class Files {
 	constructor(form, fileEl) {
 		this.filesCount = 0;
-		this.fileTr = fileEl.closest(aib.qFormTr);
+		this.fileTr = PostForm.getFieldWrap(fileEl);
 		this.onchange = null;
 		this._form = form;
 		this._inputs = [];

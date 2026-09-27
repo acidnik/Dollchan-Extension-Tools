@@ -11,19 +11,24 @@
      BUNDLE=/tmp/before.js node tools/probe-reply-refresh.mjs  # the same run against an older build
      STALE_FETCHES=3 node tools/probe-reply-refresh.mjs        # the post appears only on the last retry
 
-   Environment: BOARD_URL, BUNDLE, STALE_FETCHES (2), HEADLESS, TIMEOUT
+   Environment: BOARD_URL, BUNDLE, STALE_MS (1500), ADD_POST_FORM, HEADLESS, TIMEOUT
    Exit code: 0 when the reply appeared without a manual refresh, 1 otherwise.
 =========================================================================================================== */
 
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getChromium, launchOptions } from './lib/browser.mjs';
+import { getChromium, launchOptions, seedCfg } from './lib/browser.mjs';
 
 // The test board requires a captcha, so even a request that escapes cannot create a post there
 const BOARD_URL = process.env.BOARD_URL ?? 'https://endchan.org/test/res/6520.html';
 // How long the board "lags": thread responses requested within this window are served without the new post
 const STALE_MS = +(process.env.STALE_MS ?? 1500);
+// Dollchan's Cfg.addPostForm: 0 = form at the top, 1 = at the bottom, 2 = hidden (default). The bottom mode
+// is the one where the reply area ends up nested in the board's own form, so it is worth testing separately.
+const ADD_POST_FORM = process.env.ADD_POST_FORM ?? null;
+// The alternative reply form layout (Cfg.altLayout) is worth testing here too: it moves the whole form
+const ALT_LAYOUT = !!process.env.ALT_LAYOUT;
 const TIMEOUT = +(process.env.TIMEOUT ?? 60000);
 const BUNDLE = process.env.BUNDLE ?
 	path.resolve(process.env.BUNDLE) :
@@ -40,10 +45,22 @@ const ctx = await browser.newContext({ locale: 'ru-RU' });
 const page = await ctx.newPage();
 const startedAt = Date.now();
 const at = () => `${ Date.now() - startedAt }ms`;
+const REPLY_TEXT = 'harness message, the POST is answered locally';
 const fetches = [];
 const pageErrors = [];
+let posted = null;
 page.on('pageerror', e => pageErrors.push(e.message.slice(0, 140)));
 
+const seed = {};
+if(ADD_POST_FORM !== null) {
+	seed.addPostForm = +ADD_POST_FORM;
+}
+if(ALT_LAYOUT) {
+	seed.altLayout = 1;
+}
+if(Object.keys(seed).length) {
+	await seedCfg(page, 'endchan.org', seed);
+}
 await page.addInitScript({ path: BUNDLE });
 await page.goto(BOARD_URL, { waitUntil: 'domcontentloaded', timeout: TIMEOUT });
 // The reply form stays hidden until the user opens it, so wait for a parsed post instead
@@ -80,7 +97,21 @@ await ctx.route('**/*', async route => {
 	const req = route.request();
 	const url = req.url();
 	if(req.method() !== 'GET') {
-		console.error(`[${ at() }] POST ${ url.slice(0, 60) } answered locally, not sent`);
+		// The reply form can end up nested in a board's own form when the reply area is moved up to the
+		// posts, so check what the POST actually carries: our message, and nothing of that other form
+		const body = req.postData() ?? '';
+		posted = {
+			url,
+			hasMessage          : body.includes(encodeURIComponent(REPLY_TEXT)) || body.includes(REPLY_TEXT),
+			// The board's reply fields (message, threadId, boardUri, password…) belong in the body; what must
+			// never appear is anything from its actions form, where delete and report live, because our reply
+			// form is nested inside it when the reply area is moved up to the posts
+			hasActionsFormFields: /contentActions|deletionCheckBox|deleteFormButton/.test(body),
+			length              : body.length
+		};
+		console.error(`[${ at() }] POST ${ url.slice(0, 60) } answered locally; body ${
+			posted.length } bytes, message=${ posted.hasMessage }, ${
+			posted.hasActionsFormFields ? 'ACTIONS FORM FIELDS LEAKED' : 'no foreign fields' }`);
 		await route.fulfill({
 			status     : 200,
 			contentType: 'application/json',
@@ -107,9 +138,9 @@ await ctx.route('**/*', async route => {
 });
 
 let submitAt = null;
-await page.evaluate(() => {
-	document.querySelector('.de-textarea').value = 'harness message, the POST is answered locally';
-});
+await page.evaluate(text => {
+	document.querySelector('.de-textarea').value = text;
+}, REPLY_TEXT);
 submitAt = Date.now();
 await page.evaluate(() => document.querySelector('#formButton, #de-postform-submit').click());
 
@@ -134,6 +165,36 @@ try {
 } catch(err) {
 	appeared = false;
 }
+// Where the reply area ended up, and whether nesting it in the board's own form left that form intact
+const placement = await page.evaluate(() => {
+	const areas = [...document.querySelectorAll('.de-parea')];
+	const bottom = areas[areas.length - 1];
+	const rel = (a, b) => {
+		if(!a || !b) {
+			return null;
+		}
+		return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? 'before' : 'after';
+	};
+	const cells = [...document.querySelectorAll('.postCell')];
+	const box = document.querySelector('.deletionCheckBox');
+	const boardForm = document.querySelector('form[action$="contentActions.js"]');
+	const ourForm = document.querySelector('#de-pform form');
+	return {
+		// the reply area must sit after the posts and above the board's bottom block: navigation links,
+		// layout/colour selects and the delete/report buttons
+		afterLastPost     : rel(bottom, cells[cells.length - 1]),
+		beforeBottomNav   : rel(bottom, document.querySelector('p.bottomNav')),
+		beforeDeleteReport: rel(bottom, document.querySelector('.contentAction')),
+		boardFormIntact   : !!box && box.form === boardForm,
+		// In the "form at the bottom" mode our form lives inside the board's form (nested <form> elements,
+		// which the spec forbids), so record what the board's own scripts could see: they collect post
+		// checkboxes with getElementsByClassName('deletionCheckBox'), so nothing of ours may match that
+		ourFormNested     : !!ourForm && boardForm.contains(ourForm),
+		ourInputs         : ourForm ? ourForm.elements.length : 0,
+		oursLookLikePosts : ourForm ? ourForm.querySelectorAll('.deletionCheckBox, .postCell').length : 0
+	};
+});
+
 const post = await page.evaluate(num => {
 	const cell = document.querySelector(`.deletionCheckBox[name$="-${ num }"]`)?.closest('.postCell');
 	return {
@@ -154,6 +215,8 @@ console.log(JSON.stringify({
 	fetchTimes   : fetches,
 	gaps         : fetches.slice(1).map((t, i) => t - fetches[i]),
 	appeared,
+	posted,
+	placement,
 	timeline,
 	post,
 	popups,
@@ -161,7 +224,12 @@ console.log(JSON.stringify({
 }, null, 1));
 await browser.close();
 
-console.log(appeared ?
-	'\nOK: the reply appeared without a manual refresh' :
-	'\nFAIL: the reply never appeared — the board only had to render the thread one moment later');
-process.exitCode = appeared ? 0 : 1;
+const postOk = posted?.hasMessage && !posted.hasActionsFormFields;
+const placeOk = placement.afterLastPost === 'after' && placement.beforeBottomNav === 'before' &&
+	placement.beforeDeleteReport === 'before' && placement.boardFormIntact &&
+	// nesting our form in the board's form is only acceptable while nothing of ours looks like a post
+	placement.oursLookLikePosts === 0;
+console.log(appeared && postOk && placeOk ?
+	'\nOK: the reply was posted with its own fields and appeared without a manual refresh' :
+	`\nFAIL: appeared=${ appeared }, POST body ok=${ postOk }, placement ok=${ placeOk }`);
+process.exitCode = appeared && postOk && placeOk ? 0 : 1;

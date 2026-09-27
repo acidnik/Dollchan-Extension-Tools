@@ -60,6 +60,20 @@ function byRevision(a, b) {
 	return num(b) - num(a) || b.localeCompare(a);
 }
 
+// Seeds Dollchan's per-domain config before the page loads, so a run can start with a setting enabled. The
+// stored object has to look complete: CfgSaver hands it straight to callbacks that write into fields such as
+// `stats`, and a hand-made object without them kills the submit.
+export async function seedCfg(page, domain, values) {
+	await page.addInitScript(({ domain, values }) => {
+		let cfg = {};
+		try {
+			cfg = JSON.parse(localStorage.DESU_Config || '{}');
+		} catch(err) {}
+		cfg[domain] = Object.assign({ stats: { view: 0, op: 0, reply: 0 } }, cfg[domain], values);
+		localStorage.DESU_Config = JSON.stringify(cfg);
+	}, { domain, values });
+}
+
 export function launchOptions(extra = {}) {
 	const { args = [], ...rest } = extra;
 	return {

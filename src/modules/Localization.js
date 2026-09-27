@@ -453,6 +453,10 @@ const Lng = {
 			'Внизу',
 			'At bottom',
 			'Знизу'],
+		altLayout: [
+			'Альтернативная компоновка формы ответа (игнорирует размещение кнопок разметки)',
+			'Alternative reply form layout (ignores the markup buttons placement)',
+			'Альтернативне компонування форми відповіді (ігнорує розміщення кнопок розмітки)'],
 		userPassw: [
 			'Постоянный пароль',
 			'Fixed password',
@@ -1338,6 +1342,14 @@ const Lng = {
 		'Загружаются файлы',
 		'Loading files',
 		'Завантажуються файли'],
+	formHelp: [
+		'Справка по разметке',
+		'Formatting help',
+		'Довідка з розмітки'],
+	openCanvas: [
+		'Открыть',
+		'Open',
+		'Відкрити'],
 	cantLoad: [
 		'Не могу загрузить',
 		'Can\'t load',

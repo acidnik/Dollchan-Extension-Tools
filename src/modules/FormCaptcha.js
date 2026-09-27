@@ -7,7 +7,7 @@ class Captcha {
 		this.hasCaptcha = true;
 		this.textEl = null;
 		this.tNum = initNum;
-		this.parentEl = el.closest(aib.qFormTr) || aib.getCaptchaParent(el);
+		this.parentEl = PostForm.getFieldWrap(el) || aib.getCaptchaParent(el);
 		this.isAdded = false;
 		this._isHcap = !!$q('.h-captcha', this.parentEl);
 		this._isRecap = this._isHcap || !!$q('[id*="recaptcha"], [class*="recaptcha"]', this.parentEl);
@@ -84,7 +84,10 @@ class Captcha {
 		img.onclick = () => this.refreshCaptcha(true);
 	}
 	initTextEl() {
-		this.textEl.autocomplete = 'off';
+		// "one-time-code" instead of "off": browsers ignore the plain opt-out when they take the form for a
+		// login — the captcha sits next to a filled password — and then offer their password manager on it.
+		// This token says what the field really is: a code, not a username.
+		this.textEl.autocomplete = 'one-time-code';
 		if(!aib.formHeaders && (aib.multiFile || Cfg.fileInputs !== 2)) {
 			this.textEl.placeholder = Lng.captcha[lang];
 		}

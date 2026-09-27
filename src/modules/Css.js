@@ -317,6 +317,30 @@ function scriptCSS() {
 	.de-file-txt-wrap { display: inline-flex; width: 100%; }
 	.de-file-utils { display: inline-flex; align-items: center; float: none; }
 	.de-file-wrap { display: flex; align-items: center; }
+	/* 70% of the page, never narrower than 500px, never past the screen: on a narrow screen (a phone) the
+	   same expression gives the full width, so no media query is needed. The first width is a fallback for
+	   browsers without min()/max(). */
+	.de-altform-form {
+		width: 70%;
+		max-width: 100%;
+		width: min(100%, max(500px, 70%));
+		box-sizing: border-box;
+	}
+	.de-altform { width: 100%; border-collapse: collapse; }
+	.de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }
+	.de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+	.de-altfile { display: inline-flex; align-items: center; }
+	.de-altform-help { margin-left: 4px; font: bold 16px/16px sans-serif; text-decoration: underline; }
+	.de-altcell-cap { display: block; }
+	.de-altcell-wide { flex: 1 1 100%; }
+	.de-altcell-hints { flex: 1 1 100%; }
+	.de-altcell-links { display: block; }
+	.de-altcell-links > * { display: block; margin: 1px 0; }
+	.de-altcell-hints > p { margin: 1px 0; }
+	.de-altform-hint { opacity: .7; }
+	.de-altbreak { flex: 1 1 100%; height: 0; }
+	.de-altform-open { margin-left: 4px; padding: 1px 6px; border: 1px solid grey; font: bold 12px sans-serif; }
+	.de-altform-submit { padding: 4px 14px !important; font-size: 130% !important; font-weight: bold; }
 
 	/* Reply form */
 	.de-parea { text-align: center; clear: both; }

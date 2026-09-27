@@ -243,3 +243,72 @@ There is no automated test suite; verification is manual in a real browser.
 
 Do not stage, commit, or push unless the current user message explicitly asks for it ("commit", "push",
 "deploy"/"деплой"). `gulp make` dirtying `Wrap.js` and regenerating the artifacts is not permission to commit.
+
+## Starting a fresh session here
+
+- **Check the working tree first.** A previous session can leave work uncommitted: `git status --short`, then
+  read the diff — the code alone will not tell you what is half-finished (the alternative reply form layout
+  was left like that). If source and artifacts disagree, `npx gulp make` settles it: it is cheap and
+  idempotent.
+- **After pushing, verify the update path from outside**: fetch the raw `Dollchan_Extension_Tools.meta.js`
+  and `src/modules/Wrap.js` from `raw.githubusercontent.com/acidnik/Dollchan-Extension-Tools/master/` and
+  check `@version`, `const version` and `const commit`. Userscripts only update from what is on `master`.
+- **To let the user try an uncommitted build**: `npx gulp bump && npx gulp make`, then they open
+  `src/Dollchan_Extension_Tools.es6.user.js` in the browser (or reload the unpacked `extension/v3`).
+  Without a bump their manager will not offer it — the version is what triggers an update.
+- Screenshots and other throwaway artifacts for the user go to `tmp/` (gitignored). Number them (`-v1`,
+  `-v2`) instead of overwriting: the user compares versions by eye, and deleting them loses the history.
+
+## Verification that pays off
+
+- **Prove the check can fail.** Run the same harness against the previous build —
+  `BUNDLE=/tmp/old.js node tools/…`, where the old bundle comes from `git show HEAD:<artifact>` — and put
+  the before/after pair in the report or the commit message. A check that cannot fail proves nothing.
+- **Compare lint against HEAD**: `git stash && npx eslint <file>; git stash pop`. The repo has
+  pre-existing errors (`Css.js`, `WindowSettings.js`, plus `linebreak-style` everywhere), so the only
+  question worth answering is whether your change adds to them.
+- **Test assets must be real.** A hand-written base64 PNG that Chromium cannot decode turned a whole
+  verification into a no-op: build such files in the page (`canvas.toBlob`) instead.
+- Count requests with `page.on('request')`, not inside a route handler: a request that bypasses the route
+  otherwise looks exactly like "no request happened".
+- Measure, do not infer. CSP, board HTML and engine flags decide the outcome, and a harness run answers in
+  minutes what reading cannot.
+
+## Storage contract
+
+`CfgSaver.saveObj(domain, fn)` hands the **stored** object straight to `fn`, and callers write into fields
+such as `stats` (`loadedCfg.stats.reply++`). Anything that seeds or rewrites `DESU_Config` must keep that
+shape complete: a partial object makes the reply submit throw before it does anything visible.
+
+## Form and layout work
+
+- The reply form is the board's own markup, wrapped: `#de-pform` holds it, `.de-parea` holds the open/close
+  buttons, `_makeHideableContainer()`/`setReply()` decide where it sits. Board flags: `qBottomAnchor` (where
+  the bottom area goes — a board may keep its own block at the end of the delform) and `formHelpUrl` (the
+  board's page explaining its markup).
+- **Any regrouping of fields must keep a per-field wrapper** that `PostForm.getFieldWrap()`
+  (`closest(qFormTr + ', .de-altcell')`) finds: `hideField`, `Files.fileTr` and `Captcha.parentEl` all work
+  per wrapper. Move a control without its label (`<label>`, `<th>`) and the label stays behind; give two
+  fields one shared wrapper and hiding one hides both.
+- Every file input needs its own wrapper (`FileInput._wrap`), and in thumbnail mode the strip lives in
+  `files.thumbsEl`, not next to the input.
+- The captcha container is **empty while the layout is built**: Dollchan's `Captcha` empties it and
+  restores it on focus, so its cell has to stay in the layout while empty — otherwise the captcha is
+  restored into a detached node and never shows.
+- A form can be `display: inline-block` (the board's own), so a percentage width on something inside it
+  resolves against nothing: widths belong on the form itself.
+
+## endchan (LynxChan) facts that cost the most time
+
+- A reply goes to **`/.api/replyThread`**, not to the form's `action`, with a JSON body
+  (`{"parameters":{…},"auth":{}}`), and the answer is `{"auth":null,"status":"ok","data":"<post number>"}` —
+  that `data` is where `postNum` comes from.
+- The thread page can be served **without the reply that was just stored**; hence the refresh loop that
+  asks again (three times, a second apart) until that number appears.
+- Post numbers live in the deletion checkbox name (`board-thread-post`), not in an element id, and a post
+  without `.linkQuote` makes the `Post` constructor throw.
+- `img-src` allows `data:` but not `blob:`; `media-src` falls back to `default-src`, which allows neither —
+  video previews cannot be shown there at all.
+- The page's own footer (navigation, layout/colour selects, delete/report, board links) sits inside the same
+  `form[action$="contentActions.js"]` that wraps the posts, which is why a reply area placed after the
+  posts ends up nested in that form — harmless, since a control belongs to its nearest ancestor form.

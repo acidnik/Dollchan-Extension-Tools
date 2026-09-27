@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.4
+// @version         24.9.16.5
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -8494,8 +8494,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
   var _this24 = this;
   var _marked = _regenerator().m(getFormElements);
-  var version = '24.9.16.4';
-  var commit = '6e19721';
+  var version = '24.9.16.5';
+  var commit = '7269568';
 
 
   var doc = deWindow.document;
@@ -8594,6 +8594,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     captchaLang: 1,
     addTextBtns: 1,
     txtBtnsLoc: 1,
+    altLayout: 0,
     userPassw: 1,
     passwValue: '',
     userName: 0,
@@ -8788,6 +8789,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         txt: ['Кнопки разметки текста ', 'Text markup buttons ', 'Кнопки розмітки тексту ']
       },
       txtBtnsLoc: ['Внизу', 'At bottom', 'Знизу'],
+      altLayout: ['Альтернативная компоновка формы ответа (игнорирует размещение кнопок разметки)', 'Alternative reply form layout (ignores the markup buttons placement)', 'Альтернативне компонування форми відповіді (ігнорує розміщення кнопок розмітки)'],
       userPassw: ['Постоянный пароль', 'Fixed password', 'Постійний пароль'],
       userName: ['Постоянное имя', 'Fixed name', 'Постійне ім\'я'],
       noBoardRule: ['Правила ', 'Rules ', 'Правила '],
@@ -9034,6 +9036,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     openOriginal: ['Открыть оригинал в новой вкладке', 'Open the original image in new tab', 'Відкрити оригінал в новій вкладці'],
     loadImage: ['Загружаются картинки', 'Loading images', 'Завантажуються зображення'],
     loadFile: ['Загружаются файлы', 'Loading files', 'Завантажуються файли'],
+    formHelp: ['Справка по разметке', 'Formatting help', 'Довідка з розмітки'],
+    openCanvas: ['Открыть', 'Open', 'Відкрити'],
     cantLoad: ['Не могу загрузить', 'Can\'t load', 'Не можу завантажити'],
     willSavePview: ['Будет сохранено превью', 'Thumbnail will be saved', 'Буде збережено прев\'ю'],
     loadErrors: ['Во время загрузки произошли ошибки:', 'An error occurred during the loading:', 'Під час завантаження сталися помилки:'],
@@ -12975,7 +12979,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return "<div id=\"de-cfg-links\" class=\"de-cfg-unvis\">\n\t\t\t".concat(this._getBox('linksNavig', true), "\n\t\t\t<div class=\"de-depend\">\n\t\t\t\t").concat(this._getInp('linksOver'), "\n\t\t\t\t").concat(this._getInp('linksOut'), "<br>\n\t\t\t\t").concat(this._getBox('markViewed'), "<br>\n\t\t\t\t").concat(this._getBox('strikeHidd'), "\n\t\t\t\t<div class=\"de-depend\">").concat(this._getBox('removeHidd'), "</div>\n\t\t\t\t").concat(this._getBox('noNavigHidd'), "\n\t\t\t</div>\n\t\t\t").concat(this._getBox('markMyLinks'), "<br>\n\t\t\t").concat(this._getBox('crossLinks', true), "<br>\n\t\t\t").concat(this._getBox('decodeLinks', true), "<br>\n\t\t\t").concat(this._getBox('insertNum'), "<br>\n\t\t\t").concat(!localData ? "".concat(this._getBox('addOPLink'), "<br>\n\t\t\t\t").concat(this._getBox('addImgs', true), "<br>") : '', "\n\t\t\t<div>\n\t\t\t\t").concat(this._getBox('addMP3', true), "\n\t\t\t\t").concat(this._getBox('addVocaroo', true), "\n\t\t\t</div>\n\t\t\t").concat(this._getSel('embedYTube', true), "\n\t\t\t<div class=\"de-depend\">\n\t\t\t\t").concat(this._getInp('YTubeWidth', false), "\xD7\n\t\t\t\t").concat(this._getInp('YTubeHeigh', false), "(px)<br>\n\t\t\t\t").concat(this._getBox('YTubeTitles', true), "<br>\n\t\t\t\t").concat(this._getInp('ytApiKey', true, 25), "<br>\n\t\t\t\t").concat(this._getBox('addVimeo', true), "\n\t\t\t</div>\n\t\t</div>");
     },
     _getCfgForm: function _getCfgForm() {
-      return "<div id=\"de-cfg-form\" class=\"de-cfg-unvis\">\n\t\t\t".concat(this._getBox('ajaxPosting', true), "<br>\n\t\t\t").concat(postform.form ? "<div class=\"de-depend\">\n\t\t\t\t".concat(this._getBox('postSameImg'), "<br>\n\t\t\t\t").concat(this._getBox('removeEXIF'), "<br>\n\t\t\t\t").concat(this._getSel('removeFName'), "<br>\n\t\t\t\t").concat(this._getBox('sendErrNotif'), "<br>\n\t\t\t\t").concat(this._getBox('scrAfterRep'), "<br>\n\t\t\t\t").concat(postform.files ? this._getSel('fileInputs') : '', "\n\t\t\t</div>") : '', "\n\t\t\t").concat(postform.form ? this._getSel('addPostForm') + '<br>' : '', "\n\t\t\t").concat(postform.txta ? this._getBox('spacedQuote') + '<br>' : '', "\n\t\t\t").concat(this._getBox('favOnReply'), "<br>\n\t\t\t").concat(postform.subj ? this._getBox('warnSubjTrip') + '<br>' : '', "\n\t\t\t").concat(postform.mail ? "".concat(this._getBox('addSageBtn'), "\n\t\t\t\t").concat(this._getBox('saveSage'), "<br>") : '', "\n\t\t\t").concat(postform.captcha ? "".concat(!aib.noCapUpdTime ? this._getInp('capUpdTime', true, 4) + '<br>' : '', "\n\t\t\t\t").concat(postform.captcha.textEl ? "".concat(this._getSel('captchaLang'), "<br>") : '') : '', "\n\t\t\t").concat(!aib.noMarkupBtns && postform.txta ? "".concat(this._getSel('addTextBtns'), "\n\t\t\t\t").concat(!aib._4chan ? this._getBox('txtBtnsLoc') : '', "<br>") : '', "\n\t\t\t").concat(postform.passw ? "".concat(this._getInp('passwValue', false, 9), "\n\t\t\t\t").concat(this._getBox('userPassw'), "<input type=\"button\"") + " id=\"de-cfg-button-pass\" class=\"de-cfg-button\" value=\"".concat(Lng.change[lang], "\"><br>") : '', "\n\t\t\t").concat(postform.name ? "".concat(this._getInp('nameValue', false, 9), "\n\t\t\t\t").concat(this._getBox('userName'), "<br>") : '', "\n\t\t\t").concat(postform.rules || postform.passw || postform.name ? Lng.hide[lang] + (postform.rules ? this._getBox('noBoardRule') : '') + (postform.passw ? this._getBox('noPassword') : '') + (postform.name ? this._getBox('noName') : '') + (postform.subj ? this._getBox('noSubj') : '') : '', "\n\t\t</div>");
+      return "<div id=\"de-cfg-form\" class=\"de-cfg-unvis\">\n\t\t\t".concat(this._getBox('ajaxPosting', true), "<br>\n\t\t\t").concat(postform.form ? "<div class=\"de-depend\">\n\t\t\t\t".concat(this._getBox('postSameImg'), "<br>\n\t\t\t\t").concat(this._getBox('removeEXIF'), "<br>\n\t\t\t\t").concat(this._getSel('removeFName'), "<br>\n\t\t\t\t").concat(this._getBox('sendErrNotif'), "<br>\n\t\t\t\t").concat(this._getBox('scrAfterRep'), "<br>\n\t\t\t\t").concat(postform.files ? this._getSel('fileInputs') : '', "\n\t\t\t</div>") : '', "\n\t\t\t").concat(postform.form ? this._getSel('addPostForm') + '<br>' : '', "\n\t\t\t").concat(postform.txta ? this._getBox('spacedQuote') + '<br>' : '', "\n\t\t\t").concat(this._getBox('favOnReply'), "<br>\n\t\t\t").concat(postform.subj ? this._getBox('warnSubjTrip') + '<br>' : '', "\n\t\t\t").concat(postform.mail ? "".concat(this._getBox('addSageBtn'), "\n\t\t\t\t").concat(this._getBox('saveSage'), "<br>") : '', "\n\t\t\t").concat(postform.captcha ? "".concat(!aib.noCapUpdTime ? this._getInp('capUpdTime', true, 4) + '<br>' : '', "\n\t\t\t\t").concat(postform.captcha.textEl ? "".concat(this._getSel('captchaLang'), "<br>") : '') : '', "\n\t\t\t").concat(!aib.noMarkupBtns && postform.txta ? "".concat(this._getSel('addTextBtns'), "\n\t\t\t\t").concat(!aib._4chan ? this._getBox('txtBtnsLoc') : '', "<br>") : '', "\n\t\t\t").concat(this._getBox('altLayout', true), "<br>\n\t\t\t").concat(postform.passw ? "".concat(this._getInp('passwValue', false, 9), "\n\t\t\t\t").concat(this._getBox('userPassw'), "<input type=\"button\"") + " id=\"de-cfg-button-pass\" class=\"de-cfg-button\" value=\"".concat(Lng.change[lang], "\"><br>") : '', "\n\t\t\t").concat(postform.name ? "".concat(this._getInp('nameValue', false, 9), "\n\t\t\t\t").concat(this._getBox('userName'), "<br>") : '', "\n\t\t\t").concat(postform.rules || postform.passw || postform.name ? Lng.hide[lang] + (postform.rules ? this._getBox('noBoardRule') : '') + (postform.passw ? this._getBox('noPassword') : '') + (postform.name ? this._getBox('noName') : '') + (postform.subj ? this._getBox('noSubj') : '') : '', "\n\t\t</div>");
     },
     _getCfgCommon: function _getCfgCommon() {
       return "<div id=\"de-cfg-common\" class=\"de-cfg-unvis\">\n\t\t\t".concat(this._getSel('scriptStyle'), "<br>\n\t\t\t").concat(this._getBox('userCSS'), "\n\t\t\t<a href=\"").concat(gitWiki, "css-tricks\" class=\"de-abtn\" target=\"_blank\">[?]</a><br>\n\t\t\t").concat('animation' in doc.body.style ? this._getBox('animation') + '<br>' : '', "\n\t\t\t").concat(this._getBox('hotKeys'), "\n\t\t\t<input type=\"button\" id=\"de-cfg-button-keys\" class=\"de-cfg-button\" value=\"").concat(Lng.edit[lang], "\">\n\t\t\t<div class=\"de-depend\">").concat(this._getInp('loadPages'), "</div>\n\t\t\t").concat(this._getSel('panelCounter'), "<br>\n\t\t\t").concat(this._getBox('rePageTitle', true), "<br>\n\t\t\t").concat(!localData ? "".concat(this._getBox('inftyScroll'), "<br>\n\t\t\t\t").concat(this._getBox('hideReplies', true), "<br>\n\t\t\t\t").concat(this._getBox('scrollToTop'), "<br>") : '', "\n\t\t\t").concat(this._getBox('saveScroll'), "<br>\n\t\t\t").concat(this._getBox('favFolders'), "<br>\n\t\t\t").concat(this._getSel('favThrOrder'), "<br>\n\t\t\t").concat(this._getBox('favWinOn'), "<br>\n\t\t\t").concat(this._getBox('closePopups'), "\n\t\t</div>");
@@ -13036,7 +13040,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       fn(Cfg.YTubeTitles, ['input[info="ytApiKey"]']);
       fn(Cfg.ajaxPosting, ['input[info="postSameImg"]', 'input[info="removeEXIF"]', 'select[info="removeFName"]', 'input[info="sendErrNotif"]', 'input[info="scrAfterRep"]', 'select[info="fileInputs"]']);
       fn(Cfg.addSageBtn, ['input[info="saveSage"]']);
-      fn(Cfg.addTextBtns, ['input[info="txtBtnsLoc"]']);
+      fn(Cfg.addTextBtns && !Cfg.altLayout, ['input[info="txtBtnsLoc"]']);
       fn(Cfg.hotKeys, ['input[info="loadPages"]']);
     },
     _updateRowMeter: function _updateRowMeter(node) {
@@ -17107,10 +17111,25 @@ this.disableSpells();
       this.addMarkupPanel();
       this.setPlaceholders();
       this._initCaptcha();
+      if (this.form) {
+        this.form.autocomplete = 'off';
+      }
+      if (this.passw) {
+        this.passw.autocomplete = 'off';
+      }
+      if (this.name) {
+        this.name.autocomplete = 'nickname';
+      }
+      if (this.mail) {
+        this.mail.autocomplete = 'email';
+      }
       this._initSubmit();
       aib.updateSubmitBtn(this.subm);
       if (Cfg.ajaxPosting) {
         this._initAjaxPosting();
+      }
+      if (Cfg.altLayout) {
+        this._applyAltLayout();
       }
       if (Cfg.addSageBtn && this.mail) {
         PostForm.hideField(this.mail.closest('label') || this.mail);
@@ -17119,7 +17138,7 @@ this.disableSpells();
         }, 0);
       }
       if (Cfg.noPassword && this.passw) {
-        $hide(this.passw.closest(aib.qFormTr));
+        $hide(PostForm.getFieldWrap(this.passw));
       }
       if (Cfg.noName && this.name) {
         PostForm.hideField(this.name);
@@ -17644,7 +17663,8 @@ this.disableSpells();
         var _this48 = this;
         (this.pForm = nav.parseHTML('<div id="de-pform" class="de-win-body"></div>')).append(this.form || '', this.oeForm || '');
         var html = '<div class="de-parea"><div><a href="#"></a></div><hr></div>';
-        this.pArea = [$bBegin(DelForm.first.el, html), $aEnd(DelForm.first.el, html)];
+        var bottomEl = aib.qBottomAnchor && $q(aib.qBottomAnchor, DelForm.first.el);
+        this.pArea = [$bBegin(DelForm.first.el, html), bottomEl ? $bBegin(bottomEl, html) : $aEnd(DelForm.first.el, html)];
         this._pBtn = [this.pArea[0].firstChild, this.pArea[1].firstChild];
         this._pBtn[0].firstElementChild.onclick = function (e) {
           return _this48.showMainReply(false, e);
@@ -17655,6 +17675,192 @@ this.disableSpells();
         this.qArea = nav.parseHTML("<div style=\"display: none; ".concat(Cfg.replyWinX, "; ").concat(Cfg.replyWinY, "; z-index: ").concat(++topWinZ, ";\" id=\"de-win-reply\" class=\"").concat(aib.cReply + (Cfg.replyWinDrag ? ' de-win' : ' de-win-inpost'), "\"></div>"));
         this.isBottom = Cfg.addPostForm === 1;
         this.setReply(false, !aib.t || Cfg.addPostForm > 1);
+      }
+    }, {
+      key: "_getFormHelpEl",
+      value: function _getFormHelpEl() {
+        var _native = $q('a[href*=".static"]', this.form);
+        if (_native) {
+          _native.className = 'de-altform-help';
+        } else if (aib.formHelpUrl) {
+          var _el9 = doc.createElement('a');
+          _el9.className = 'de-altform-help';
+          _el9.href = aib.getAbsLink(aib.formHelpUrl);
+          this.form.append(_el9);
+        } else {
+          return null;
+        }
+        var el = $q('.de-altform-help', this.form);
+        el.textContent = '?';
+        el.target = '_blank';
+        el.title = Lng.formHelp[lang];
+        return el;
+      }
+    }, {
+      key: "_applyAltLayout",
+      value: function _applyAltLayout() {
+        var form = this.form,
+          txta = this.txta,
+          subm = this.subm,
+          name = this.name,
+          subj = this.subj,
+          mail = this.mail,
+          passw = this.passw,
+          video = this.video,
+          files = this.files,
+          captcha = this.captcha;
+        var isTable = !!txta.closest('tr');
+        var mk = function mk(tag, cls) {
+          var el = doc.createElement(tag);
+          el.className = cls;
+          return el;
+        };
+        var cell = function cell() {
+          var el = mk(isTable ? 'td' : 'div', 'de-altcell');
+          for (var _len6 = arguments.length, els = new Array(_len6), _key4 = 0; _key4 < _len6; _key4++) {
+            els[_key4] = arguments[_key4];
+          }
+          el.append.apply(el, _toConsumableArray(els.filter(Boolean)));
+          return el;
+        };
+        var groupOf = function groupOf(el) {
+          if (!el) {
+            return null;
+          }
+          var isSingle = function isSingle(node) {
+            return node.querySelectorAll('input, select, textarea, button').length === 1;
+          };
+          var label = el.closest('label');
+          if (label && isSingle(label)) {
+            return label;
+          }
+          var parent = el.parentNode;
+          var isCell = parent && (parent.tagName === 'TD' || parent.tagName === 'TH');
+          if (parent && parent !== form && !isCell && isSingle(parent)) {
+            return parent;
+          }
+          return el;
+        };
+        var row = function row() {
+          for (var _len7 = arguments.length, cells = new Array(_len7), _key5 = 0; _key5 < _len7; _key5++) {
+            cells[_key5] = arguments[_key5];
+          }
+          var keep = cells.filter(function (el) {
+            return el === null || el === void 0 ? void 0 : el.childElementCount;
+          });
+          if (!keep.length) {
+            return null;
+          }
+          var el = mk(isTable ? 'tr' : 'div', 'de-altrow');
+          el.append.apply(el, _toConsumableArray(keep));
+          return el;
+        };
+        var fileCell = null;
+        if (files) {
+          var _fileCell;
+          fileCell = cell();
+          var txtArea = FileInput._isThumbMode && $q('.de-file-txt-area', form);
+          (_fileCell = fileCell).append.apply(_fileCell, _toConsumableArray([txtArea, files.thumbsEl].filter(Boolean)));
+          for (var _iterator19 = _createForOfIteratorHelperLoose(files._inputs), _step19; !(_step19 = _iterator19()).done;) {
+            var inp = _step19.value;
+            var holder = mk('div', 'de-altfile');
+            var parts = FileInput._isThumbMode ? [inp._input] : [inp._txtWrap, inp._input, inp._utils];
+            holder.append.apply(holder, parts);
+            fileCell.append(holder);
+          }
+          files.fileTr = fileCell;
+        }
+        var capCell = null;
+        if (captcha !== null && captcha !== void 0 && captcha.parentEl) {
+          capCell = cell.apply(void 0, _toConsumableArray(captcha.parentEl.childNodes));
+          captcha.parentEl = capCell;
+        }
+        var capRow = capCell ? mk(isTable ? 'tr' : 'div', 'de-altrow') : null;
+        if (capRow) {
+          capCell.classList.add('de-altcell-cap');
+          capRow.append(capCell);
+        }
+        var markup = $id('de-txt-panel');
+        if (markup) {
+          markup.style.cssFloat = 'none';
+        }
+        var spoiler = aib.qFormSpoiler && $q(aib.qFormSpoiler, form);
+        var flag = $q('select[name="flag"]', form);
+        var drawing = _toConsumableArray(form.querySelectorAll('#oekakiWidth, #oekakiHeight'));
+        var drawLink = $q('a[onclick*="Draw("]', form);
+        var wPaint = $id('wPaint');
+        var ownSmalls = _toConsumableArray(form.querySelectorAll(':scope > .small'));
+        var fileHints = ownSmalls.filter(function (el) {
+          return !el.matches('a') && !el.querySelector('a');
+        });
+        var boardEls = new Set(_toConsumableArray(form.querySelectorAll(':scope > p')).filter(function (el) {
+          return !fileHints.includes(el) && el.style.display !== 'none';
+        }));
+        for (var _iterator20 = _createForOfIteratorHelperLoose(ownSmalls), _step20; !(_step20 = _iterator20()).done;) {
+          var _el0 = _step20.value;
+          if (_el0.matches('a') || _el0.querySelector('a')) {
+            var para = _el0.closest('p') || _el0;
+            if (para.style.display !== 'none') {
+              boardEls.add(para);
+            }
+          }
+        }
+        if (fileHints.length) {
+          var hintWrap = mk('div', 'de-altcell-hints');
+          hintWrap.append.apply(hintWrap, _toConsumableArray(fileHints));
+          if (fileCell) {
+            fileCell.append(hintWrap);
+          } else {
+            fileCell = cell(hintWrap);
+          }
+        }
+        if (drawLink) {
+          var hint = drawLink.textContent.trim();
+          var boardDraw = drawLink.onclick;
+          drawLink.className = 'de-altform-open';
+          drawLink.textContent = Lng.openCanvas[lang];
+          drawLink.onclick = null;
+          if (hint) {
+            var hintEl = mk('span', 'de-altform-hint');
+            hintEl.textContent = hint;
+            drawing.push(hintEl);
+          }
+          if (wPaint) {
+            $hide(wPaint);
+            var isOpen = false;
+            drawLink.addEventListener('click', function (e) {
+              e.preventDefault();
+              if (isOpen) {
+                $hide(wPaint);
+              } else {
+                $show(wPaint);
+                if (!$q('canvas', wPaint)) {
+                  boardDraw === null || boardDraw === void 0 || boardDraw.call(drawLink);
+                }
+              }
+              isOpen = !isOpen;
+            });
+          }
+        }
+        var sageBtn = Cfg.addSageBtn && mail ? this.sageBtn : null;
+        var drawBreak = wPaint ? mk('div', 'de-altbreak') : null;
+        form.classList.add('de-altform-form');
+        var txtaCell = cell(txta);
+        txtaCell.classList.add('de-altcell-wide');
+        txta.style.setProperty('width', '100%', 'important');
+        subm.classList.add('de-altform-submit');
+        var linkCell = cell.apply(void 0, _toConsumableArray(boardEls));
+        linkCell.classList.add('de-altcell-links');
+        var rows = [row(cell(name), cell(subj), cell(sageBtn || mail)), row(cell(groupOf(spoiler)), cell(groupOf(flag))), row(fileCell, cell(video)), row(cell(markup, this._getFormHelpEl())), row(txtaCell), capRow, row(cell(subm), cell(passw)), row(linkCell), row(cell.apply(void 0, _toConsumableArray(drawing).concat([drawLink, drawBreak, wPaint])))].filter(Boolean);
+        var layout = mk(isTable ? 'table' : 'div', 'de-altform');
+        layout.append.apply(layout, _toConsumableArray(rows));
+        form.prepend(layout);
+        for (var _i10 = 0, _arr2 = _toConsumableArray(form.children); _i10 < _arr2.length; _i10++) {
+          var el = _arr2[_i10];
+          if (el !== layout) {
+            $hide(el);
+          }
+        }
       }
     }, {
       key: "_makeWindow",
@@ -17754,6 +17960,11 @@ this.disableSpells();
         }
       }
     }], [{
+      key: "getFieldWrap",
+      value: function getFieldWrap(el) {
+        return el.closest("".concat(aib.qFormTr, ", .de-altcell"));
+      }
+    }, {
       key: "hideField",
       value: function hideField(el) {
         var els = el.parentNode.children;
@@ -17764,7 +17975,7 @@ this.disableSpells();
             break;
           }
         }
-        $toggle(hideTr ? el.closest(aib.qFormTr) : el);
+        $toggle(hideTr ? PostForm.getFieldWrap(el) : el);
       }
     }, {
       key: "setUserName",
@@ -17797,7 +18008,7 @@ this.disableSpells();
       key: "setUserPassw",
       value: function () {
         var _setUserPassw = _asyncToGenerator(_regenerator().m(function _callee33() {
-          var el, value, _iterator19, _step19, passEl;
+          var el, value, _iterator21, _step21, passEl;
           return _regenerator().w(function (_context34) {
             while (1) switch (_context34.n) {
               case 0:
@@ -17816,8 +18027,8 @@ this.disableSpells();
                 return CfgSaver.save('passwValue', el.value);
               case 2:
                 value = postform.passw.value = Cfg.passwValue;
-                for (_iterator19 = _createForOfIteratorHelperLoose(DelForm); !(_step19 = _iterator19()).done;) {
-                  passEl = _step19.value.passEl;
+                for (_iterator21 = _createForOfIteratorHelperLoose(DelForm); !(_step21 = _iterator21()).done;) {
+                  passEl = _step21.value.passEl;
                   if (passEl) {
                     passEl.value = value;
                   }
@@ -18317,9 +18528,9 @@ this.disableSpells();
       var needProgress,
         data,
         hasFiles,
-        _iterator36,
-        _step36,
-        _step36$value,
+        _iterator38,
+        _step38,
+        _step38$value,
         name,
         value,
         type,
@@ -18339,13 +18550,13 @@ this.disableSpells();
             needProgress = _args67.length > 2 && _args67[2] !== undefined ? _args67[2] : false;
             data = new FormData();
             hasFiles = false;
-            _iterator36 = _createForOfIteratorHelperLoose(getFormElements(form, submitter));
+            _iterator38 = _createForOfIteratorHelperLoose(getFormElements(form, submitter));
           case 1:
-            if ((_step36 = _iterator36()).done) {
+            if ((_step38 = _iterator38()).done) {
               _context67.n = 8;
               break;
             }
-            _step36$value = _step36.value, name = _step36$value.name, value = _step36$value.value, type = _step36$value.type, el = _step36$value.el;
+            _step38$value = _step38.value, name = _step38$value.name, value = _step38$value.value, type = _step38$value.type, el = _step38$value.el;
             val = value;
             if (!(name === 'de-file-txt')) {
               _context67.n = 2;
@@ -18542,7 +18753,7 @@ this.disableSpells();
     function Files(form, fileEl) {
       _classCallCheck(this, Files);
       this.filesCount = 0;
-      this.fileTr = fileEl.closest(aib.qFormTr);
+      this.fileTr = PostForm.getFieldWrap(fileEl);
       this.onchange = null;
       this._form = form;
       this._inputs = [];
@@ -18582,8 +18793,8 @@ this.disableSpells();
       key: "changeMode",
       value: function changeMode() {
         var isThumbMode = Cfg.fileInputs === 2;
-        for (var _iterator20 = _createForOfIteratorHelperLoose(this._inputs), _step20; !(_step20 = _iterator20()).done;) {
-          var inp = _step20.value;
+        for (var _iterator22 = _createForOfIteratorHelperLoose(this._inputs), _step22; !(_step22 = _iterator22()).done;) {
+          var inp = _step22.value;
           inp.changeMode(isThumbMode);
         }
         this.hideEmpty();
@@ -18592,8 +18803,8 @@ this.disableSpells();
       key: "clearInputs",
       value: function clearInputs() {
         var _aib$clearFileInputs, _aib3;
-        for (var _iterator21 = _createForOfIteratorHelperLoose(this._inputs), _step21; !(_step21 = _iterator21()).done;) {
-          var inp = _step21.value;
+        for (var _iterator23 = _createForOfIteratorHelperLoose(this._inputs), _step23; !(_step23 = _iterator23()).done;) {
+          var inp = _step23.value;
           inp.clearInp();
         }
         this.hideEmpty();
@@ -18941,9 +19152,9 @@ this.disableSpells();
               if (_filesLen) {
                 var _inpArray = this._parent._inputs;
                 var inpLen = _inpArray.length;
-                for (var _i10 = _inpArray.indexOf(this), _j3 = 0; _i10 < inpLen && _j3 < _filesLen; ++_i10, ++_j3) {
-                  FileInput._readDroppedFile(_inpArray[_i10], dt.files[_j3]);
-                  this._parent._files[_i10] = dt.files[_j3];
+                for (var _i11 = _inpArray.indexOf(this), _j3 = 0; _i11 < inpLen && _j3 < _filesLen; ++_i11, ++_j3) {
+                  FileInput._readDroppedFile(_inpArray[_i11], dt.files[_j3]);
+                  this._parent._files[_i11] = dt.files[_j3];
                 }
                 DollchanAPI.notify('filechange', this._parent._files);
               } else {
@@ -19255,7 +19466,7 @@ this.disableSpells();
       this.hasCaptcha = true;
       this.textEl = null;
       this.tNum = initNum;
-      this.parentEl = el.closest(aib.qFormTr) || aib.getCaptchaParent(el);
+      this.parentEl = PostForm.getFieldWrap(el) || aib.getCaptchaParent(el);
       this.isAdded = false;
       this._isHcap = !!$q('.h-captcha', this.parentEl);
       this._isRecap = this._isHcap || !!$q('[id*="recaptcha"], [class*="recaptcha"]', this.parentEl);
@@ -19350,7 +19561,7 @@ this.disableSpells();
       key: "initTextEl",
       value: function initTextEl() {
         var _this58 = this;
-        this.textEl.autocomplete = 'off';
+        this.textEl.autocomplete = 'one-time-code';
         if (!aib.formHeaders && (aib.multiFile || Cfg.fileInputs !== 2)) {
           this.textEl.placeholder = Lng.captcha[lang];
         }
@@ -19625,8 +19836,8 @@ this.disableSpells();
           _this61 = this;
         var temp;
         var el = e.target;
-        var _el9 = el,
-          classList = _el9.classList;
+        var _el1 = el,
+          classList = _el1.classList;
         var type = e.type;
         var isOutEvent = type === 'mouseout';
         var isPview = this instanceof Pview;
@@ -19688,8 +19899,8 @@ this.disableSpells();
                 return;
               }
               el = temp; 
-              var _el0 = el;
-              classList = _el0.classList;
+              var _el10 = el;
+              classList = _el10.classList;
             case 'img':
               if (classList.contains('de-video-thumb')) {
                 if (Cfg.embedYTube === 1) {
@@ -20545,8 +20756,8 @@ Spells.addSpell(9, '', false);
       value: function toggleImages() {
         var isExpand = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !this.images.expanded;
         var isExpandVideos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-        for (var _iterator22 = _createForOfIteratorHelperLoose(this.images), _step22; !(_step22 = _iterator22()).done;) {
-          var image = _step22.value;
+        for (var _iterator24 = _createForOfIteratorHelperLoose(this.images), _step24; !(_step24 = _iterator24()).done;) {
+          var image = _step24.value;
           if ((image.isImage || isExpandVideos && image.isVideo) && image.expanded ^ isExpand) {
             if (isExpand) {
               image.expandImg(true, null);
@@ -20683,10 +20894,10 @@ Spells.addSpell(9, '', false);
     }, {
       key: "delSimilarTextRules",
       value: function delSimilarTextRules(words) {
-        for (var _iterator23 = _createForOfIteratorHelperLoose(similarTextRules), _step23; !(_step23 = _iterator23()).done;) {
-          var _step23$value = _slicedToArray(_step23.value, 2),
-            srcNum = _step23$value[0],
-            ruleWords = _step23$value[1];
+        for (var _iterator25 = _createForOfIteratorHelperLoose(similarTextRules), _step25; !(_step25 = _iterator25()).done;) {
+          var _step25$value = _slicedToArray(_step25.value, 2),
+            srcNum = _step25$value[0],
+            ruleWords = _step25$value[1];
           if (Post.isSimilarWords(ruleWords, words)) {
             similarTextRules["delete"](srcNum);
           }
@@ -20699,10 +20910,10 @@ Spells.addSpell(9, '', false);
           return;
         }
         var curWords = Post.getWrds(post.text);
-        for (var _iterator24 = _createForOfIteratorHelperLoose(similarTextRules), _step24; !(_step24 = _iterator24()).done;) {
-          var _step24$value = _slicedToArray(_step24.value, 2),
-            srcNum = _step24$value[0],
-            words = _step24$value[1];
+        for (var _iterator26 = _createForOfIteratorHelperLoose(similarTextRules), _step26; !(_step26 = _iterator26()).done;) {
+          var _step26$value = _slicedToArray(_step26.value, 2),
+            srcNum = _step26$value[0],
+            words = _step26$value[1];
           if (Post.isSimilarWords(words, curWords)) {
             post.setUserVisib(true, true, 'similar to >>' + srcNum);
             return;
@@ -22671,10 +22882,10 @@ Spells.addSpell(9, '', false);
       }
       if (Cfg.addImgs || localData) {
         els = $Q('.de-img-embed', post.el);
-        for (var _i11 = 0, _len6 = els.length; _i11 < _len6; ++_i11) {
-          var _el1 = els[_i11];
-          last = new EmbeddedImage(post, _el1, last);
-          filesMap.set(_el1, last);
+        for (var _i12 = 0, _len8 = els.length; _i12 < _len8; ++_i12) {
+          var _el11 = els[_i12];
+          last = new EmbeddedImage(post, _el11, last);
+          filesMap.set(_el11, last);
           if (!first) {
             first = last;
           }
@@ -22788,9 +22999,9 @@ Spells.addSpell(9, '', false);
       var areas = 256 / levels;
       var values = 256 / (levels - 1);
       var hash = 0;
-      for (var _i12 = 0; _i12 < newh; ++_i12) {
+      for (var _i13 = 0; _i13 < newh; ++_i13) {
         for (var _j4 = 0; _j4 < neww; ++_j4) {
-          var temp = _i12 / (newh - 1) * (oldh - 1);
+          var temp = _i13 / (newh - 1) * (oldh - 1);
           var l = Math.min(temp | 0, oldh - 2);
           var u = temp - l;
           temp = _j4 / (neww - 1) * (oldw - 1);
@@ -22893,8 +23104,8 @@ Spells.addSpell(9, '', false);
     if (!post) {
       return;
     }
-    for (var _iterator25 = _createForOfIteratorHelperLoose(post.images), _step25; !(_step25 = _iterator25()).done;) {
-      var image = _step25.value;
+    for (var _iterator27 = _createForOfIteratorHelperLoose(post.images), _step27; !(_step27 = _iterator27()).done;) {
+      var image = _step27.value;
       var link = image.nameLink;
       if (!link) {
         return;
@@ -22976,19 +23187,19 @@ Spells.addSpell(9, '', false);
     }, {
       key: "getRefLinks",
       value: _regenerator().m(function getRefLinks(i, thrUrl) {
-        var msg, links, _i13, len, link, tc, lNum, url;
+        var msg, links, _i14, len, link, tc, lNum, url;
         return _regenerator().w(function (_context45) {
           while (1) switch (_context45.n) {
             case 0:
               msg = i === 0 ? $q(aib.qPostMsg, this._form) : $q(aib.qPostMsg, this._posts[i - 1]);
               links = $Q('a', msg);
-              _i13 = 0, len = links.length;
+              _i14 = 0, len = links.length;
             case 1:
-              if (!(_i13 < len)) {
+              if (!(_i14 < len)) {
                 _context45.n = 4;
                 break;
               }
-              link = links[_i13];
+              link = links[_i14];
               tc = link.textContent;
               if (!(tc[0] === '>' && tc[1] === '>')) {
                 _context45.n = 3;
@@ -23007,7 +23218,7 @@ Spells.addSpell(9, '', false);
                 link.setAttribute('href', thrUrl + url);
               }
             case 3:
-              ++_i13;
+              ++_i14;
               _context45.n = 1;
               break;
             case 4:
@@ -23251,8 +23462,8 @@ Spells.addSpell(9, '', false);
         var filesHTML = '';
         if (files !== null && files !== void 0 && files.length) {
           filesHTML = "<div class=\"post__images post__images_type_".concat(files.length === 1 ? 'single' : 'multi', "\">");
-          for (var _iterator26 = _createForOfIteratorHelperLoose(files), _step26; !(_step26 = _iterator26()).done;) {
-            var file = _step26.value;
+          for (var _iterator28 = _createForOfIteratorHelperLoose(files), _step28; !(_step28 = _iterator28()).done;) {
+            var file = _step28.value;
             var _file$fullname = file.fullname,
               fullname = _file$fullname === void 0 ? file.name : _file$fullname,
               _file$displayname = file.displayname,
@@ -23294,17 +23505,17 @@ Spells.addSpell(9, '', false);
     }, {
       key: "bannedPostsData",
       value: _regenerator().m(function bannedPostsData() {
-        var _iterator27, _step27, _step27$value, banned, num, _t39;
+        var _iterator29, _step29, _step29$value, banned, num, _t39;
         return _regenerator().w(function (_context48) {
           while (1) switch (_context48.n) {
             case 0:
-              _iterator27 = _createForOfIteratorHelperLoose(this._posts);
+              _iterator29 = _createForOfIteratorHelperLoose(this._posts);
             case 1:
-              if ((_step27 = _iterator27()).done) {
+              if ((_step29 = _iterator29()).done) {
                 _context48.n = 7;
                 break;
               }
-              _step27$value = _step27.value, banned = _step27$value.banned, num = _step27$value.num;
+              _step29$value = _step29.value, banned = _step29$value.banned, num = _step29$value.num;
               _t39 = banned;
               _context48.n = _t39 === 1 ? 2 : _t39 === 2 ? 4 : 6;
               break;
@@ -23397,8 +23608,8 @@ Spells.addSpell(9, '', false);
           return;
         }
         this._isHidden = true;
-        for (var _iterator28 = _createForOfIteratorHelperLoose(this._set), _step28; !(_step28 = _iterator28()).done;) {
-          var num = _step28.value;
+        for (var _iterator30 = _createForOfIteratorHelperLoose(this._set), _step30; !(_step30 = _iterator30()).done;) {
+          var num = _step30.value;
           var post = pByNum.get(num);
           if (post && !post.isHidden) {
             if (isForced) {
@@ -23415,8 +23626,8 @@ Spells.addSpell(9, '', false);
       key: "initPostRef",
       value: function initPostRef(tUrl, strNums) {
         var html = '';
-        for (var _iterator29 = _createForOfIteratorHelperLoose(this._set), _step29; !(_step29 = _iterator29()).done;) {
-          var num = _step29.value;
+        for (var _iterator31 = _createForOfIteratorHelperLoose(this._set), _step31; !(_step31 = _iterator31()).done;) {
+          var num = _step31.value;
           html += this._getHTML(num, tUrl, strNums === null || strNums === void 0 ? void 0 : strNums.has(num));
         }
         this._createEl(html, false);
@@ -23468,8 +23679,8 @@ Spells.addSpell(9, '', false);
           return;
         }
         this._isHidden = false;
-        for (var _iterator30 = _createForOfIteratorHelperLoose(this._set), _step30; !(_step30 = _iterator30()).done;) {
-          var num = _step30.value;
+        for (var _iterator32 = _createForOfIteratorHelperLoose(this._set), _step32; !(_step32 = _iterator32()).done;) {
+          var num = _step32.value;
           var post = pByNum.get(num);
           if (post && post.isHidden && !post.spellHidden) {
             if (isForced) {
@@ -23510,14 +23721,14 @@ Spells.addSpell(9, '', false);
       key: "gen",
       value: function gen(posts) {
         var tNums = DelForm.tNums;
-        for (var _iterator31 = _createForOfIteratorHelperLoose(posts), _step31; !(_step31 = _iterator31()).done;) {
-          var _step31$value = _slicedToArray(_step31.value, 2),
-            pNum = _step31$value[0],
-            post = _step31$value[1];
-          for (var _iterator32 = _createForOfIteratorHelperLoose(post.refLinks()), _step32; !(_step32 = _iterator32()).done;) {
-            var _step32$value = _slicedToArray(_step32.value, 2),
-              link = _step32$value[0],
-              lNum = _step32$value[1];
+        for (var _iterator33 = _createForOfIteratorHelperLoose(posts), _step33; !(_step33 = _iterator33()).done;) {
+          var _step33$value = _slicedToArray(_step33.value, 2),
+            pNum = _step33$value[0],
+            post = _step33$value[1];
+          for (var _iterator34 = _createForOfIteratorHelperLoose(post.refLinks()), _step34; !(_step34 = _iterator34()).done;) {
+            var _step34$value = _slicedToArray(_step34.value, 2),
+              link = _step34$value[0],
+              lNum = _step34$value[1];
             if (MyPosts.has(lNum)) {
               link.classList.add('de-ref-you');
               if (!MyPosts.has(pNum) && post instanceof AbstractPost) {
@@ -23924,11 +24135,11 @@ Spells.addSpell(9, '', false);
         if (!aib.qBan) {
           return;
         }
-        for (var _iterator33 = _createForOfIteratorHelperLoose(pBuilder.bannedPostsData()), _step33; !(_step33 = _iterator33()).done;) {
-          var _step33$value = _slicedToArray(_step33.value, 3),
-            banId = _step33$value[0],
-            bNum = _step33$value[1],
-            bEl = _step33$value[2];
+        for (var _iterator35 = _createForOfIteratorHelperLoose(pBuilder.bannedPostsData()), _step35; !(_step35 = _iterator35()).done;) {
+          var _step35$value = _slicedToArray(_step35.value, 3),
+            banId = _step35$value[0],
+            bNum = _step35$value[1],
+            bEl = _step35$value[2];
           var post = bNum ? pByNum.get(bNum) : this.op;
           if (post && post.banned !== banId) {
             $q(aib.qBan, post.el).remove();
@@ -23953,8 +24164,8 @@ Spells.addSpell(9, '', false);
           nav.domContainer.innerHTML = aib.fixHTML(html.join(''));
           fragment = nav.domContainer.content;
           var posts = $Q(aib.qPost, fragment);
-          for (var _i14 = 0, len = posts.length; _i14 < len; ++_i14) {
-            last = this._addPost(fragment, posts[_i14], begin + _i14 + 1, last, maybeVParser);
+          for (var _i15 = 0, len = posts.length; _i15 < len; ++_i15) {
+            last = this._addPost(fragment, posts[_i15], begin + _i15 + 1, last, maybeVParser);
             newVisCount -= maybeSpells.value.runSpells(last);
             embedPostMsgImages(last.el);
           }
@@ -25369,6 +25580,8 @@ Spells.addSpell(9, '', false);
 
       this.cReply = 'reply';
       this.qBan = null;
+      this.formHelpUrl = null;
+      this.qBottomAnchor = null;
       this.qClosed = null;
       this.qDelBtn = 'input[type="submit"]';
       this.qDelForm = '#delform, form[name="delform"]';
@@ -25875,8 +26088,8 @@ Spells.addSpell(9, '', false);
       function Kusaba() {
         var _this103;
         _classCallCheck(this, Kusaba);
-        for (var _len7 = arguments.length, args = new Array(_len7), _key4 = 0; _key4 < _len7; _key4++) {
-          args[_key4] = arguments[_key4];
+        for (var _len9 = arguments.length, args = new Array(_len9), _key6 = 0; _key6 < _len9; _key6++) {
+          args[_key6] = arguments[_key6];
         }
         _this103 = _callSuper(this, Kusaba, [].concat(args));
         _this103.formHeaders = true;
@@ -25928,8 +26141,8 @@ Spells.addSpell(9, '', false);
       function Tinyboard() {
         var _this104;
         _classCallCheck(this, Tinyboard);
-        for (var _len8 = arguments.length, args = new Array(_len8), _key5 = 0; _key5 < _len8; _key5++) {
-          args[_key5] = arguments[_key5];
+        for (var _len0 = arguments.length, args = new Array(_len0), _key7 = 0; _key7 < _len0; _key7++) {
+          args[_key7] = arguments[_key7];
         }
         _this104 = _callSuper(this, Tinyboard, [].concat(args));
         _this104.cReply = 'post reply';
@@ -26109,8 +26322,8 @@ Spells.addSpell(9, '', false);
       function Vichan() {
         var _this107;
         _classCallCheck(this, Vichan);
-        for (var _len9 = arguments.length, args = new Array(_len9), _key6 = 0; _key6 < _len9; _key6++) {
-          args[_key6] = arguments[_key6];
+        for (var _len1 = arguments.length, args = new Array(_len1), _key8 = 0; _key8 < _len1; _key8++) {
+          args[_key8] = arguments[_key8];
         }
         _this107 = _callSuper(this, Vichan, [].concat(args));
         _this107.multiFile = true;
@@ -26173,8 +26386,8 @@ Spells.addSpell(9, '', false);
       function TinyIB() {
         var _this108;
         _classCallCheck(this, TinyIB);
-        for (var _len0 = arguments.length, args = new Array(_len0), _key7 = 0; _key7 < _len0; _key7++) {
-          args[_key7] = arguments[_key7];
+        for (var _len10 = arguments.length, args = new Array(_len10), _key9 = 0; _key9 < _len10; _key9++) {
+          args[_key9] = arguments[_key9];
         }
         _this108 = _callSuper(this, TinyIB, [].concat(args));
         _this108.hasCatalog = true;
@@ -26233,16 +26446,18 @@ Spells.addSpell(9, '', false);
       function Lynxchan() {
         var _this109;
         _classCallCheck(this, Lynxchan);
-        for (var _len1 = arguments.length, args = new Array(_len1), _key8 = 0; _key8 < _len1; _key8++) {
-          args[_key8] = arguments[_key8];
+        for (var _len11 = arguments.length, args = new Array(_len11), _key0 = 0; _key0 < _len11; _key0++) {
+          args[_key0] = arguments[_key0];
         }
         _this109 = _callSuper(this, Lynxchan, [].concat(args));
         _this109.cReply = 'innerPost';
         _this109.firstPage = 1;
+        _this109.formHelpUrl = '/.static/posting.html';
         _this109.formParent = 'threadId';
         _this109.hasCatalog = true;
         _this109.jsonSubmit = true;
         _this109.multiFile = true;
+        _this109.qBottomAnchor = 'a[name="bottom"]';
         _this109.qDelBtn = '#deleteFormButton';
         _this109.qDelForm = 'form[action$="contentActions.js"]';
         _this109.qError = '#errorLabel, #labelMessage';
@@ -26533,8 +26748,8 @@ Spells.addSpell(9, '', false);
       function FoolFuuka() {
         var _this110;
         _classCallCheck(this, FoolFuuka);
-        for (var _len10 = arguments.length, args = new Array(_len10), _key9 = 0; _key9 < _len10; _key9++) {
-          args[_key9] = arguments[_key9];
+        for (var _len12 = arguments.length, args = new Array(_len12), _key1 = 0; _key1 < _len12; _key1++) {
+          args[_key1] = arguments[_key1];
         }
         _this110 = _callSuper(this, FoolFuuka, [].concat(args));
         _this110.cReply = 'post_wrapper';
@@ -26621,8 +26836,8 @@ Spells.addSpell(9, '', false);
       function Makaba() {
         var _this111;
         _classCallCheck(this, Makaba);
-        for (var _len11 = arguments.length, args = new Array(_len11), _key0 = 0; _key0 < _len11; _key0++) {
-          args[_key0] = arguments[_key0];
+        for (var _len13 = arguments.length, args = new Array(_len13), _key10 = 0; _key10 < _len13; _key10++) {
+          args[_key10] = arguments[_key10];
         }
         _this111 = _callSuper(this, Makaba, [].concat(args));
         _this111.cReply = 'de-reply-class';
@@ -26950,8 +27165,8 @@ Spells.addSpell(9, '', false);
       function _2channel() {
         var _this113;
         _classCallCheck(this, _2channel);
-        for (var _len12 = arguments.length, args = new Array(_len12), _key1 = 0; _key1 < _len12; _key1++) {
-          args[_key1] = arguments[_key1];
+        for (var _len14 = arguments.length, args = new Array(_len14), _key11 = 0; _key11 < _len14; _key11++) {
+          args[_key11] = arguments[_key11];
         }
         _this113 = _callSuper(this, _2channel, [].concat(args));
         _this113.cReply = 'post reply';
@@ -27102,8 +27317,8 @@ Spells.addSpell(9, '', false);
       function _2chRip() {
         var _this114;
         _classCallCheck(this, _2chRip);
-        for (var _len13 = arguments.length, args = new Array(_len13), _key10 = 0; _key10 < _len13; _key10++) {
-          args[_key10] = arguments[_key10];
+        for (var _len15 = arguments.length, args = new Array(_len15), _key12 = 0; _key12 < _len15; _key12++) {
+          args[_key12] = arguments[_key12];
         }
         _this114 = _callSuper(this, _2chRip, [].concat(args));
         _this114.jsonSubmit = true;
@@ -27148,8 +27363,8 @@ Spells.addSpell(9, '', false);
       function _410chan() {
         var _this115;
         _classCallCheck(this, _410chan);
-        for (var _len14 = arguments.length, args = new Array(_len14), _key11 = 0; _key11 < _len14; _key11++) {
-          args[_key11] = arguments[_key11];
+        for (var _len16 = arguments.length, args = new Array(_len16), _key13 = 0; _key13 < _len16; _key13++) {
+          args[_key13] = arguments[_key13];
         }
         _this115 = _callSuper(this, _410chan, [].concat(args));
         _this115.hasCatalog = true;
@@ -27215,8 +27430,8 @@ Spells.addSpell(9, '', false);
       function _4chan() {
         var _this117;
         _classCallCheck(this, _4chan);
-        for (var _len15 = arguments.length, args = new Array(_len15), _key12 = 0; _key12 < _len15; _key12++) {
-          args[_key12] = arguments[_key12];
+        for (var _len17 = arguments.length, args = new Array(_len17), _key14 = 0; _key14 < _len17; _key14++) {
+          args[_key14] = arguments[_key14];
         }
         _this117 = _callSuper(this, _4chan, [].concat(args));
         _this117._4chan = true;
@@ -27441,8 +27656,8 @@ Spells.addSpell(9, '', false);
       function Aoba() {
         var _this118;
         _classCallCheck(this, Aoba);
-        for (var _len16 = arguments.length, args = new Array(_len16), _key13 = 0; _key13 < _len16; _key13++) {
-          args[_key13] = arguments[_key13];
+        for (var _len18 = arguments.length, args = new Array(_len18), _key15 = 0; _key15 < _len18; _key15++) {
+          args[_key15] = arguments[_key15];
         }
         _this118 = _callSuper(this, Aoba, [].concat(args));
         _this118.hasCatalog = true;
@@ -27483,8 +27698,8 @@ Spells.addSpell(9, '', false);
       function Arhivach() {
         var _this119;
         _classCallCheck(this, Arhivach);
-        for (var _len17 = arguments.length, args = new Array(_len17), _key14 = 0; _key14 < _len17; _key14++) {
-          args[_key14] = arguments[_key14];
+        for (var _len19 = arguments.length, args = new Array(_len19), _key16 = 0; _key16 < _len19; _key16++) {
+          args[_key16] = arguments[_key16];
         }
         _this119 = _callSuper(this, Arhivach, [].concat(args));
         _this119.cReply = 'post';
@@ -27598,8 +27813,8 @@ Spells.addSpell(9, '', false);
       function Bulochka() {
         var _this121;
         _classCallCheck(this, Bulochka);
-        for (var _len18 = arguments.length, args = new Array(_len18), _key15 = 0; _key15 < _len18; _key15++) {
-          args[_key15] = arguments[_key15];
+        for (var _len20 = arguments.length, args = new Array(_len20), _key17 = 0; _key17 < _len20; _key17++) {
+          args[_key17] = arguments[_key17];
         }
         _this121 = _callSuper(this, Bulochka, [].concat(args));
         _this121.markupBB = true;
@@ -27645,8 +27860,8 @@ Spells.addSpell(9, '', false);
       function Deadach() {
         var _this122;
         _classCallCheck(this, Deadach);
-        for (var _len19 = arguments.length, args = new Array(_len19), _key16 = 0; _key16 < _len19; _key16++) {
-          args[_key16] = arguments[_key16];
+        for (var _len21 = arguments.length, args = new Array(_len21), _key18 = 0; _key18 < _len21; _key18++) {
+          args[_key18] = arguments[_key18];
         }
         _this122 = _callSuper(this, Deadach, [].concat(args));
         _this122.qPostImg = '.post-img';
@@ -27700,8 +27915,8 @@ Spells.addSpell(9, '', false);
       function Dollchan() {
         var _this123;
         _classCallCheck(this, Dollchan);
-        for (var _len20 = arguments.length, args = new Array(_len20), _key17 = 0; _key17 < _len20; _key17++) {
-          args[_key17] = arguments[_key17];
+        for (var _len22 = arguments.length, args = new Array(_len22), _key19 = 0; _key19 < _len22; _key19++) {
+          args[_key19] = arguments[_key19];
         }
         _this123 = _callSuper(this, Dollchan, [].concat(args));
         _this123.dollchan = true;
@@ -27913,8 +28128,8 @@ Spells.addSpell(9, '', false);
       function Ejchan() {
         var _this126;
         _classCallCheck(this, Ejchan);
-        for (var _len21 = arguments.length, args = new Array(_len21), _key18 = 0; _key18 < _len21; _key18++) {
-          args[_key18] = arguments[_key18];
+        for (var _len23 = arguments.length, args = new Array(_len23), _key20 = 0; _key20 < _len23; _key20++) {
+          args[_key20] = arguments[_key20];
         }
         _this126 = _callSuper(this, Ejchan, [].concat(args));
         _this126.qDelForm = '.thread-outer';
@@ -27939,8 +28154,8 @@ Spells.addSpell(9, '', false);
       function Endchan() {
         var _this127;
         _classCallCheck(this, Endchan);
-        for (var _len22 = arguments.length, args = new Array(_len22), _key19 = 0; _key19 < _len22; _key19++) {
-          args[_key19] = arguments[_key19];
+        for (var _len24 = arguments.length, args = new Array(_len24), _key21 = 0; _key21 < _len24; _key21++) {
+          args[_key21] = arguments[_key21];
         }
         _this127 = _callSuper(this, Endchan, [].concat(args));
         _this127.jsonSubmit = false;
@@ -28004,8 +28219,8 @@ Spells.addSpell(9, '', false);
       function Gensokyo() {
         var _this128;
         _classCallCheck(this, Gensokyo);
-        for (var _len23 = arguments.length, args = new Array(_len23), _key20 = 0; _key20 < _len23; _key20++) {
-          args[_key20] = arguments[_key20];
+        for (var _len25 = arguments.length, args = new Array(_len25), _key22 = 0; _key22 < _len25; _key22++) {
+          args[_key22] = arguments[_key22];
         }
         _this128 = _callSuper(this, Gensokyo, [].concat(args));
         _this128.hasRefererErr = true;
@@ -28019,8 +28234,8 @@ Spells.addSpell(9, '', false);
       function Iichan() {
         var _this129;
         _classCallCheck(this, Iichan);
-        for (var _len24 = arguments.length, args = new Array(_len24), _key21 = 0; _key21 < _len24; _key21++) {
-          args[_key21] = arguments[_key21];
+        for (var _len26 = arguments.length, args = new Array(_len26), _key23 = 0; _key23 < _len26; _key23++) {
+          args[_key23] = arguments[_key23];
         }
         _this129 = _callSuper(this, Iichan, [].concat(args));
         _this129.hasArchive = true;
@@ -28082,8 +28297,8 @@ Spells.addSpell(9, '', false);
       function Ivchan() {
         var _this130;
         _classCallCheck(this, Ivchan);
-        for (var _len25 = arguments.length, args = new Array(_len25), _key22 = 0; _key22 < _len25; _key22++) {
-          args[_key22] = arguments[_key22];
+        for (var _len27 = arguments.length, args = new Array(_len27), _key24 = 0; _key24 < _len27; _key24++) {
+          args[_key24] = arguments[_key24];
         }
         _this130 = _callSuper(this, Ivchan, [].concat(args));
         _this130.anchor = '#i';
@@ -28153,8 +28368,8 @@ Spells.addSpell(9, '', false);
       function Kohlchan() {
         var _this131;
         _classCallCheck(this, Kohlchan);
-        for (var _len26 = arguments.length, args = new Array(_len26), _key23 = 0; _key23 < _len26; _key23++) {
-          args[_key23] = arguments[_key23];
+        for (var _len28 = arguments.length, args = new Array(_len28), _key25 = 0; _key25 < _len28; _key25++) {
+          args[_key25] = arguments[_key25];
         }
         _this131 = _callSuper(this, Kohlchan, [].concat(args));
         _this131.kohlchan = true;
@@ -28287,8 +28502,8 @@ Spells.addSpell(9, '', false);
             };
             var files = [new File([new Blob([ContentLoader.getDataFromCanvas($q('.wPaint-canvas', oekakiEl))], mime)], 'oekaki.png', mime)].concat(_toConsumableArray(data.getAll('files').slice(0, -1)));
             data["delete"]('files');
-            for (var _iterator34 = _createForOfIteratorHelperLoose(files), _step34; !(_step34 = _iterator34()).done;) {
-              var file = _step34.value;
+            for (var _iterator36 = _createForOfIteratorHelperLoose(files), _step36; !(_step36 = _iterator36()).done;) {
+              var file = _step36.value;
               data.append('files', file);
             }
           }
@@ -28301,8 +28516,8 @@ Spells.addSpell(9, '', false);
       function Kropyvach() {
         var _this132;
         _classCallCheck(this, Kropyvach);
-        for (var _len27 = arguments.length, args = new Array(_len27), _key24 = 0; _key24 < _len27; _key24++) {
-          args[_key24] = arguments[_key24];
+        for (var _len29 = arguments.length, args = new Array(_len29), _key26 = 0; _key26 < _len29; _key26++) {
+          args[_key26] = arguments[_key26];
         }
         _this132 = _callSuper(this, Kropyvach, [].concat(args));
         _this132.markupBB = true;
@@ -28326,8 +28541,8 @@ Spells.addSpell(9, '', false);
       function Lainchan() {
         var _this133;
         _classCallCheck(this, Lainchan);
-        for (var _len28 = arguments.length, args = new Array(_len28), _key25 = 0; _key25 < _len28; _key25++) {
-          args[_key25] = arguments[_key25];
+        for (var _len30 = arguments.length, args = new Array(_len30), _key27 = 0; _key27 < _len30; _key27++) {
+          args[_key27] = arguments[_key27];
         }
         _this133 = _callSuper(this, Lainchan, [].concat(args));
         _this133.markupBB = true;
@@ -28366,8 +28581,8 @@ Spells.addSpell(9, '', false);
       function Nichan() {
         var _this134;
         _classCallCheck(this, Nichan);
-        for (var _len29 = arguments.length, args = new Array(_len29), _key26 = 0; _key26 < _len29; _key26++) {
-          args[_key26] = arguments[_key26];
+        for (var _len31 = arguments.length, args = new Array(_len31), _key28 = 0; _key28 < _len31; _key28++) {
+          args[_key28] = arguments[_key28];
         }
         _this134 = _callSuper(this, Nichan, [].concat(args));
         _this134.markupBB = true;
@@ -28413,8 +28628,8 @@ Spells.addSpell(9, '', false);
       function Ponyach() {
         var _this135;
         _classCallCheck(this, Ponyach);
-        for (var _len30 = arguments.length, args = new Array(_len30), _key27 = 0; _key27 < _len30; _key27++) {
-          args[_key27] = arguments[_key27];
+        for (var _len32 = arguments.length, args = new Array(_len32), _key29 = 0; _key29 < _len32; _key29++) {
+          args[_key29] = arguments[_key29];
         }
         _this135 = _callSuper(this, Ponyach, [].concat(args));
         _this135.formParent = 'replythread';
@@ -28478,8 +28693,8 @@ Spells.addSpell(9, '', false);
       function Synch() {
         var _this136;
         _classCallCheck(this, Synch);
-        for (var _len31 = arguments.length, args = new Array(_len31), _key28 = 0; _key28 < _len31; _key28++) {
-          args[_key28] = arguments[_key28];
+        for (var _len33 = arguments.length, args = new Array(_len33), _key30 = 0; _key30 < _len33; _key30++) {
+          args[_key30] = arguments[_key30];
         }
         _this136 = _callSuper(this, Synch, [].concat(args));
         _this136.markupBB = true;
@@ -28540,8 +28755,8 @@ Spells.addSpell(9, '', false);
       function Warosu() {
         var _this137;
         _classCallCheck(this, Warosu);
-        for (var _len32 = arguments.length, args = new Array(_len32), _key29 = 0; _key29 < _len32; _key29++) {
-          args[_key29] = arguments[_key29];
+        for (var _len34 = arguments.length, args = new Array(_len34), _key31 = 0; _key31 < _len34; _key31++) {
+          args[_key31] = arguments[_key31];
         }
         _this137 = _callSuper(this, Warosu, [].concat(args));
         _this137.hasHtmlTag = false;
@@ -28618,8 +28833,8 @@ Spells.addSpell(9, '', false);
       return null;
     }
     domain = domain.match(/(?:(?:[^.]+\.)(?=org\.|net\.|com\.))?[^.]+\.[^.]+$|^\d+\.\d+\.\d+\.\d+$|localhost/)[0];
-    for (var _i15 = ibEngines.length - 1; _i15 >= 0; --_i15) {
-      var _ibEngines$_i = _slicedToArray(ibEngines[_i15], 2),
+    for (var _i16 = ibEngines.length - 1; _i16 >= 0; --_i16) {
+      var _ibEngines$_i = _slicedToArray(ibEngines[_i16], 2),
         path = _ibEngines$_i[0],
         Ctor = _ibEngines$_i[1];
       if ($q(path, doc)) {
@@ -28672,8 +28887,8 @@ Spells.addSpell(9, '', false);
         case 'registerapi':
           if (data) {
             rv = {};
-            for (var _iterator35 = _createForOfIteratorHelperLoose(data), _step35; !(_step35 = _iterator35()).done;) {
-              var aName = _step35.value;
+            for (var _iterator37 = _createForOfIteratorHelperLoose(data), _step37; !(_step37 = _iterator37()).done;) {
+              var aName = _step37.value;
               rv[aName] = DollchanAPI._register(aName.toLowerCase());
             }
           }
@@ -28871,7 +29086,7 @@ Spells.addSpell(9, '', false);
     }
     var p = Math.max(Cfg.minImgSize || 0, 50);
     x += "\n\t/* Full images */\n\t.de-img-embed, .de-fullimg { border: none; outline: none; cursor: pointer; image-orientation: from-image; }\n\t.de-img-embed { max-width: 200px; max-height: 200px; }\n\t.de-fullimg { display: block; }\n\t.de-fullimg, .de-fullimg-wrap-link { flex: 0 0 auto; transition: none !important; max-width: none; max-height: none; }\n\t.de-fullimg-center { position: fixed; margin: 0 !important; z-index: 9999; background-color: #ccc; border: 1px solid black !important; -moz-box-sizing: content-box; box-sizing: content-box; }\n\t.de-fullimg-info { padding: 1px 4px; margin-bottom: -20px; background-color: rgba(64,64,64,.8); white-space: nowrap; line-height: 17px; }\n\t.de-fullimg-info > .de-btn-img { color: #fff; }\n\t.de-fullimg-link { display: inline-block; font: bold 12px tahoma; color: #fff !important; text-decoration: none; outline: none; }\n\t.de-fullimg-link:hover { color: #fff !important; background: rgba(64,64,64,.6); }\n\t.de-fullimg-load { position: absolute; z-index: 2; width: 50px; height: 50px; top: 50%; left: 50%; margin: -25px; }\n\t.de-fullimg-rotated { position: absolute; max-width: none; }\n\t.de-fullimg-rotated + .de-fullimg-info { position: absolute; bottom: 0; }\n\t.de-fullimg-scale { color: #fff; font: bold 12px tahoma; cursor: default; }\n\t.de-fullimg-video-hack { position: absolute; ".concat(nav.isMobile && nav.isWebkit ?
-    'display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; top: 0; right: 0; color: #fff; font-size: 2em;' : 'width: 100%; height: calc(100% - 40px);', " z-index: 1; cursor: pointer; }\n\t.de-fullimg-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: center; }\n\t.de-fullimg-wrap-center, .de-fullimg-wrap-link, .de-fullimg-video > video { width: 100%; height: 100%; }\n\t.de-fullimg-wrap-center > .de-fullimg-wrap-link > .de-fullimg { height: 100%; }\n\t.de-fullimg-wrap-inpost { min-width: ").concat(p, "px; min-height: ").concat(p, "px; ").concat(aib.multiFile ? '' : 'margin: 2px 5px; -moz-box-sizing: border-box; box-sizing: border-box; ', " }\n\t.de-fullimg-wrap-nosize > .de-fullimg-wrap-link > .de-fullimg { opacity: 0.3; }\n\t.de-img-btn { position: fixed; top: 50%; z-index: 10000; height: 36px; width: 36px; border-radius: 10px 0 0 10px; color: #f0f0f0; cursor: pointer; }\n\t.de-img-btn > svg { height: 32px; width: 32px; margin: 2px; }\n\t#de-img-btn-auto { right: 0; margin-top: 58px; }\n\t.de-img-btn-auto-on { color: #ffe100; }\n\t#de-img-btn-next { right: 0; margin-top: -18px; }\n\t.de-img-btn-none { display: none; }\n\t#de-img-btn-prev { left: 0; margin-top: -18px; transform: scaleX(-1); }\n\t#de-img-btn-rotate { right: 0; margin-top: 20px; }\n\t.de-webm-title { color: #ffe100 !important; font: bold 12px tahoma; }\n\n\t/* Embedders */\n\t").concat(contentIcon('.de-video-link.de-ytube', 'https://youtube.com/favicon.ico'), "\n\t").concat(contentIcon('.de-video-link.de-vimeo', 'https://vimeo.com/favicon.ico'), "\n\t").concat(contentIcon('.de-img-arch', 'data:image/gif;base64,R0lGODlhEAAQALMAAF82SsxdwQMEP6+zzRA872NmZQesBylPHYBBHP///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAkALAAAAAAQABAAQARTMMlJaxqjiL2L51sGjCOCkGiBGWyLtC0KmPIoqUOg78i+ZwOCUOgpDIW3g3KJWC4t0ElBRqtdMr6AKRsA1qYy3JGgMR4xGpAAoRYkVDDWKx6NRgAAOw=='), "\n\t").concat(contentIcon('.de-img-audio', 'data:image/gif;base64,R0lGODlhEAAQAKIAAGya4wFLukKG4oq3802i7Bqy9P///wAAACH5BAEAAAYALAAAAAAQABAAQANBaLrcHsMN4QQYhE01OoCcQIyOYQGooKpV1GwNuAwAa9RkqTPpWqGj0YTSELg0RIYM+TjOkgba0sOaAEbGBW7HTQAAOw=='), "\n\t.de-current::after { content: \" \u25CF\"; }\n\t.de-img-arch, .de-img-audio { margin-left: 4px; color: inherit; text-decoration: none; font-weight: bold; }\n\t.de-mp3 { margin: 5px 20px; }\n\t.de-video-obj { margin: 5px 20px; white-space: nowrap; }\n\t.de-video-obj-inline { display: inline-block; }\n\t#de-video-btn-resize { padding: 0 14px 8px 0; margin: 0 8px; border: 2px solid; border-radius: 2px; }\n\t#de-video-btn-hide, #de-video-btn-prev { margin-left: auto; }\n\t#de-video-buttons { display: flex; margin-bottom: 2px; align-items: center; width: 100%; line-height: 16px; }\n\t#de-video-buttons > a:not(:hover) { color: inherit; }\n\t.de-video-expanded { width: 854px !important; height: 480px !important; }\n\t#de-video-list { padding: 0 0 4px; overflow-y: auto; width: 100%; }\n\t.de-video-refpost { margin: 0 3px; color: inherit; text-decoration: none; cursor: pointer; }\n\t.de-video-resizer::after { content: \"\u2795\"; margin: 0 -15px 0 3px; vertical-align: 6px; color: #000; font-size: 12px; cursor: pointer; }\n\t.de-video-player, .de-video-thumb { width: 100%; height: 100%; }\n\ta.de-video-player { display: inline-block; position: relative; border-spacing: 0; border: none; }\n\ta.de-video-player::after { content: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAQAAACMYb/JAAAArklEQVR4AYXSr05CYRjA4cPGxjRosTijdvNJzmD1CrwAvQWugASNwGg0MoErOIVCPCMx0hmBMaAA4mPX8/2rT/i+9/1lPu0M3MtCN1OAvS+NEFkDmHqoJwcAbHzUkb9n7C5FqLynCAzdpAhLrynCRc9VnEDpKUWYpUmZIlt5nBQeY889amvGPj33HBvdt45WbAELeWyNP/qu/8dwBrDyVp9UBRi5DYXZdTLxEs77F5bCVAHlDJ1UAAAAAElFTkSuQmCC\"); position: absolute;top: 50%; left: 50%; padding: 12px 24px; margin: -22px 0 0 -32px; background-color: rgba(255,0,0,.4); border-radius: 8px; line-height: 0; }\n\ta.de-video-player:hover::after { background-color: rgba(255,0,0,.7); }\n\t.de-video-title[de-time]::after { content: \" [\" attr(de-time) \"]\"; color: red; }\n\t.de-video-title[de-time].de-current::after { content: \" [\" attr(de-time) \"] \u25CF\"; color: red; }\n\t.de-vocaroo { display: block; }\n\tvideo { background: black; }\n\n\t/* File inputs */\n\t.de-file { display: inline-block; vertical-align: top; margin: 1px; height: ").concat(p = aib.multiFile ? 90 : 130, "px; width: ").concat(p, "px; text-align: center; background-color: rgba(96,96,96,.15); border: 1px dashed grey; }\n\t.de-file > .de-file-img > div { display: flex; justify-content: center; align-items: center; height: ").concat(p, "px; cursor: pointer; }\n\t.de-file > .de-file-utils { display: none; height: 18px; margin-top: -20px; padding: 1px 0; background: rgba(64,64,64,.6); position: relative; -moz-box-sizing: initial; box-sizing: initial; }\n\t.de-file > .de-file-utils > .de-file-rarmsg { display: block; position: absolute; bottom: 20px; width: 100%; margin: 0; background: rgba(64,64,64,.6); color: #fff; }\n\t#de-file-area { margin-top: 1px; width: 275px; min-width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; white-space: nowrap; }\n\t.de-file-drag { background: rgba(96,96,96,.8); border: 1px solid grey; opacity: .7; }\n\t.de-file:hover:not(.de-file-drag) > .de-file-utils { display: block !important; }\n\timg.de-file-img, video.de-file-img { max-width: ").concat(p, "px; max-height: ").concat(p, "px; }\n\t.de-file-input { max-width: 300px; }\n\t.de-file-input + .de-file-utils { margin-left: 4px; }\n\t.de-file-off > .de-file-img > div::after { content: \"").concat(Lng.dropFileHere[lang], "\"; display: block; width: 80px; margin: 0 auto; font: 11px arial; opacity: .8; white-space: initial; }\n\t.de-file-rarmsg { margin: 0 2px; vertical-align: 4px; font: bold 11px tahoma; cursor: default; }\n\t.de-file-btn-del, .de-file-btn-rar, .de-file-btn-ren, .de-file-btn-txt { margin: 0 1px; width: 16px; height: 16px; cursor: pointer; }\n\t.de-file-btn-del > svg, .de-file-btn-rar > svg, .de-file-btn-ren > svg, .de-file-btn-txt > svg { width: 16px; height: 16px; }\n\t.de-file-spoil { margin: 0 3px; vertical-align: 1px !important; }\n\t.de-file-txt-add { margin-left: 2px; padding: 0 !important; width: 22px; font-weight: bold; }\n\t.de-file-txt-input { flex-grow: 1; border: 1px solid #9c9c9c; padding: 2px; font: 12px/16px sans-serif; }\n\t.de-file-txt-noedit { background: rgba(255,255,255,.5); cursor: pointer; }\n\t.de-file-txt-wrap { display: inline-flex; width: 100%; }\n\t.de-file-utils { display: inline-flex; align-items: center; float: none; }\n\t.de-file-wrap { display: flex; align-items: center; }\n\n\t/* Reply form */\n\t.de-parea { text-align: center; clear: both; }\n\t.de-parea > #de-pform { margin-top: 4px; }\n\t.de-parea-btn-close::after { content: \"").concat(Lng.hideForm[lang], "\"; }\n\t.de-parea-btn-thr::after { content: \"").concat(Lng.makeThr[lang], "\"; }\n\t.de-parea-btn-reply::after { content: \"").concat(Lng.makeReply[lang], "\"; }\n\t#de-pform > form { padding: 0; margin: 0; border: none; }\n\t#de-resizer-text { display: inline-block !important; padding: 5px; margin: 0 0 -2px -10px; border-bottom: 2px solid #666; border-right: 2px solid #666; float: none !important; cursor: se-resize; }\n\t.de-win-inpost { display: inline-block; width: auto; padding: 3px; margin: 2px 0; float: none; clear: left; }\n\t.de-win-inpost > .de-resizer { display: none; }\n\t.de-win-inpost > .de-win-head { background: none; color: inherit; }\n\t#de-win-reply { width: auto !important; min-width: 0; padding: 0 !important; border: none !important; }\n\t#de-win-reply.de-win { position: fixed !important; padding: 0 !important; margin: 0 !important; border-radius: 10px 10px 0 0; }\n\t#de-win-reply.de-win > .de-win-body { padding: 2px 2px 0 1px; border: 1px solid gray; }\n\t#de-win-reply.de-win .de-textarea { min-width: 98% !important; resize: none !important; }\n\t#de-win-reply.de-win #de-resizer-text { display: none !important; }\n\t#de-sagebtn { display: inline-block; margin: 3px 4px 0 4px !important; cursor: pointer; }\n\t.de-textarea { display: inline-block; padding: 3px !important; min-width: 275px !important; min-height: 90px !important; resize: both; transition: none !important; }\n\n\t/* Thread navigation */\n\t#de-thr-navarrow { display: none; position: absolute; top: 50%; left: 34px; transform: translateY(-50%); width: 7px; height: 7px; }\n\t#de-thr-navpanel { color: #F5F5F5; height: 98px; width: 41px; position: fixed; top: 50%; left: 0px; padding: 0; margin: -49px 0 0; background: #777; border: 1px solid #525252; border-left: none; border-radius: 0 5px 5px 0; cursor: pointer; z-index: 1000; }\n\t.de-thr-navpanel-hidden { opacity: .7; margin-left: -34px !important; }\n\t.de-thr-navpanel-hidden > #de-thr-navarrow { display: initial; }\n\t#de-thr-navup { padding: 12px 9px 13px 8px; border-radius: 0 5px 0 0; }\n\t#de-thr-navdown { padding: 13px 9px 12px 8px; border-radius: 0 0 5px 0; }\n\t#de-thr-navup, #de-thr-navdown { width: 41px; height: 49px; -moz-box-sizing: border-box; box-sizing: border-box; }\n\t:not(.de-thr-navpanel-hidden) > #de-thr-navup:hover, :not(.de-thr-navpanel-hidden) > #de-thr-navdown:hover { background: #555; }\n\n\t/* Other */\n\t.de-abtn, a.link-button { text-decoration: none !important; outline: none; }\n\t.de-button { flex: none; padding: 0 ").concat(nav.isFirefox ? 2 : 4, "px !important; margin: 1px 2px; min-width: auto !iportant; height: 24px; font: 13px arial; }\n\t.de-donate-logo { display: inline-block; margin-right: 10px; fill: inherit; color: #F5F5F5; border-radius: 80px 0 0 0; }\n\t.de-donate-logo > svg { width: 130px; height: 130px; }\n\t.de-editor { display: block; width: 600px; height: 300px; max-width: calc(100vw - 20px); font: 12px courier new; tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; }\n\t.de-gotothr-button { vertical-align: 5px; font-size: 0 !important; }\n\t.de-gotothr-button::after { content: \"").concat(Lng.goToThr[lang], "\"; font-size: 14px; }\n\t.de-hidden { float: left; overflow: hidden !important; margin: 0 !important; padding: 0 !important; border: none !important; width: 0 !important; height: 0 !important; display: inline !important; }\n\t.de-input-key { padding: 0 2px !important; margin: 0 !important; font: 13px/15px arial !important; }\n\tinput[type=\"text\"].de-input-selected { background: rgba(255,255,150,0.4) !important }\n\t.de-link-backref { text-decoration: none; }\n\t.de-link-parent { outline: 1px dotted !important; }\n\t.de-link-pview { font-weight: bold; }\n\t.de-list { padding-top: 4px; }\n\t.de-list::before { content: \"\u25CF\"; margin-right: 4px; }\n\t.de-menu { padding: 0 !important; margin: 0 !important; width: auto !important; min-width: 0 !important; z-index: 10002; border: 1px solid grey !important; text-align: left; }\n\t.de-menu-item { display: block; padding: 3px 10px; color: inherit; text-decoration: none; font: 13px arial; white-space: nowrap; cursor: pointer; }\n\t.de-menu-item:hover { background-color: #222; color: #fff; }\n\t.de-omitted { color: grey; }\n\t.de-omitted::before { content: \"").concat(Lng.postsOmitted[lang], "\"; }\n\t.de-page-num { clear: both; }\n\t.de-popup { display: block !important; overflow: visible !important; width: auto !important; min-width: 0pt !important; padding: 8px !important; margin: 1px !important; border: 1px solid grey !important; float: right !important; clear: both !important; white-space: pre-wrap; }\n\t.de-popup-btn { display: inline-block; vertical-align: -1px; color: green; font-size: 1.5em; line-height: 16px; cursor: pointer; }\n\t.de-popup > hr { margin: 0 !important; }\n\t.de-post-hiddencontent { display: none !important; }\n\t.de-pview { position: absolute !important; width: auto; min-width: 0; z-index: 9999; border: 1px solid grey !important; margin: 0 !important; display: block !important; }\n\t.de-pview-info { padding: 3px 6px !important; }\n\t.de-ref-del::after { content: \" (Del)\"; }\n\t.de-ref-op::after { content: \" (OP)\"; }\n\t.de-refcomma:last-child { display: none; }\n\t.de-refmap { margin: 10px 4px 4px 4px; font-size: 75%; font-style: italic; }\n\t.de-refmap::before { content: \"").concat(Lng.replies[lang], " \"; }\n\t.de-replies-hide::after { content: \"").concat(Lng.hidePosts[lang], "\"; }\n\t.de-replies-show::after { content: \"").concat(Lng.showPosts[lang], "\"; }\n\t.de-thr-buttons { clear: left; margin-top: 5px; }\n\t").concat(aib.t ? '.de-thr-buttons > .de-btn-reply { display: none; }' : '', "\n\t.de-thr-collapse-link::after { content: \"").concat(Lng.collapseThr[lang], "\"; }\n\t.de-thr-hid { display: block; padding: 2px; }\n\t.de-thr-updater-link::after { content: \"").concat(Lng.getNewPosts[lang], "\"; }\n\t#de-updater-count::before { content: \": \"; }\n\t.de-viewed { color: #747488 !important; }\n\t.de-wait, .de-fav-wait, .de-fullimg-load { animation: de-wait-anim 1s linear infinite; }\n\t.de-wait { margin: 0 2px -3px 0 !important; width: 16px; height: 16px; }\n\t#de-wrapper-popup { max-width: calc(100vw - (100vw - 100%)); overflow-x: hidden !important; overflow-y: auto !important; -moz-box-sizing: border-box; box-sizing: border-box; max-height: 100vh; position: fixed; right: 0; top: 0; z-index: 9999; font: 14px arial; cursor: default; }\n\t").concat(!aib.dollchan ? ".link-button { display: inline-flex; padding: 4px 8px; margin-left: 4px; background: rgba(40, 40, 160, 0.08); border: 1px solid rgba(120, 120, 120, .5); border-radius: 4px; font: 14px/14px arial; }\n\t\t.link-button:hover { background: rgba(100, 100, 160, 0.20); }\n\t\t.link-button:active { transform: translateY(1px); }" : '', "\n\t@keyframes de-wait-anim { to { transform: rotate(360deg); } }\n\n\t/* Mobile devices */\n\t@media screen and (max-width: 768px) {\n\t\t.de-btn-expthr, .de-btn-fav, .de-btn-fav-sel, .de-btn-hide, .de-btn-hide-user, .de-btn-img, .de-btn-reply, .de-btn-sage, .de-btn-stick, .de-btn-stick-on, .de-btn-unhide, .de-btn-unhide-user, .de-win-btn-clear, .de-win-btn-close, .de-win-btn-toggle { width: 19px; height: 19px; vertical-align: -5px; }\n\t\t.de-video-obj { max-width: calc(100vw - 6px); margin: 5px 0; }\n\t}");
+    'display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; top: 0; right: 0; color: #fff; font-size: 2em;' : 'width: 100%; height: calc(100% - 40px);', " z-index: 1; cursor: pointer; }\n\t.de-fullimg-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: center; }\n\t.de-fullimg-wrap-center, .de-fullimg-wrap-link, .de-fullimg-video > video { width: 100%; height: 100%; }\n\t.de-fullimg-wrap-center > .de-fullimg-wrap-link > .de-fullimg { height: 100%; }\n\t.de-fullimg-wrap-inpost { min-width: ").concat(p, "px; min-height: ").concat(p, "px; ").concat(aib.multiFile ? '' : 'margin: 2px 5px; -moz-box-sizing: border-box; box-sizing: border-box; ', " }\n\t.de-fullimg-wrap-nosize > .de-fullimg-wrap-link > .de-fullimg { opacity: 0.3; }\n\t.de-img-btn { position: fixed; top: 50%; z-index: 10000; height: 36px; width: 36px; border-radius: 10px 0 0 10px; color: #f0f0f0; cursor: pointer; }\n\t.de-img-btn > svg { height: 32px; width: 32px; margin: 2px; }\n\t#de-img-btn-auto { right: 0; margin-top: 58px; }\n\t.de-img-btn-auto-on { color: #ffe100; }\n\t#de-img-btn-next { right: 0; margin-top: -18px; }\n\t.de-img-btn-none { display: none; }\n\t#de-img-btn-prev { left: 0; margin-top: -18px; transform: scaleX(-1); }\n\t#de-img-btn-rotate { right: 0; margin-top: 20px; }\n\t.de-webm-title { color: #ffe100 !important; font: bold 12px tahoma; }\n\n\t/* Embedders */\n\t").concat(contentIcon('.de-video-link.de-ytube', 'https://youtube.com/favicon.ico'), "\n\t").concat(contentIcon('.de-video-link.de-vimeo', 'https://vimeo.com/favicon.ico'), "\n\t").concat(contentIcon('.de-img-arch', 'data:image/gif;base64,R0lGODlhEAAQALMAAF82SsxdwQMEP6+zzRA872NmZQesBylPHYBBHP///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAkALAAAAAAQABAAQARTMMlJaxqjiL2L51sGjCOCkGiBGWyLtC0KmPIoqUOg78i+ZwOCUOgpDIW3g3KJWC4t0ElBRqtdMr6AKRsA1qYy3JGgMR4xGpAAoRYkVDDWKx6NRgAAOw=='), "\n\t").concat(contentIcon('.de-img-audio', 'data:image/gif;base64,R0lGODlhEAAQAKIAAGya4wFLukKG4oq3802i7Bqy9P///wAAACH5BAEAAAYALAAAAAAQABAAQANBaLrcHsMN4QQYhE01OoCcQIyOYQGooKpV1GwNuAwAa9RkqTPpWqGj0YTSELg0RIYM+TjOkgba0sOaAEbGBW7HTQAAOw=='), "\n\t.de-current::after { content: \" \u25CF\"; }\n\t.de-img-arch, .de-img-audio { margin-left: 4px; color: inherit; text-decoration: none; font-weight: bold; }\n\t.de-mp3 { margin: 5px 20px; }\n\t.de-video-obj { margin: 5px 20px; white-space: nowrap; }\n\t.de-video-obj-inline { display: inline-block; }\n\t#de-video-btn-resize { padding: 0 14px 8px 0; margin: 0 8px; border: 2px solid; border-radius: 2px; }\n\t#de-video-btn-hide, #de-video-btn-prev { margin-left: auto; }\n\t#de-video-buttons { display: flex; margin-bottom: 2px; align-items: center; width: 100%; line-height: 16px; }\n\t#de-video-buttons > a:not(:hover) { color: inherit; }\n\t.de-video-expanded { width: 854px !important; height: 480px !important; }\n\t#de-video-list { padding: 0 0 4px; overflow-y: auto; width: 100%; }\n\t.de-video-refpost { margin: 0 3px; color: inherit; text-decoration: none; cursor: pointer; }\n\t.de-video-resizer::after { content: \"\u2795\"; margin: 0 -15px 0 3px; vertical-align: 6px; color: #000; font-size: 12px; cursor: pointer; }\n\t.de-video-player, .de-video-thumb { width: 100%; height: 100%; }\n\ta.de-video-player { display: inline-block; position: relative; border-spacing: 0; border: none; }\n\ta.de-video-player::after { content: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAQAAACMYb/JAAAArklEQVR4AYXSr05CYRjA4cPGxjRosTijdvNJzmD1CrwAvQWugASNwGg0MoErOIVCPCMx0hmBMaAA4mPX8/2rT/i+9/1lPu0M3MtCN1OAvS+NEFkDmHqoJwcAbHzUkb9n7C5FqLynCAzdpAhLrynCRc9VnEDpKUWYpUmZIlt5nBQeY889amvGPj33HBvdt45WbAELeWyNP/qu/8dwBrDyVp9UBRi5DYXZdTLxEs77F5bCVAHlDJ1UAAAAAElFTkSuQmCC\"); position: absolute;top: 50%; left: 50%; padding: 12px 24px; margin: -22px 0 0 -32px; background-color: rgba(255,0,0,.4); border-radius: 8px; line-height: 0; }\n\ta.de-video-player:hover::after { background-color: rgba(255,0,0,.7); }\n\t.de-video-title[de-time]::after { content: \" [\" attr(de-time) \"]\"; color: red; }\n\t.de-video-title[de-time].de-current::after { content: \" [\" attr(de-time) \"] \u25CF\"; color: red; }\n\t.de-vocaroo { display: block; }\n\tvideo { background: black; }\n\n\t/* File inputs */\n\t.de-file { display: inline-block; vertical-align: top; margin: 1px; height: ").concat(p = aib.multiFile ? 90 : 130, "px; width: ").concat(p, "px; text-align: center; background-color: rgba(96,96,96,.15); border: 1px dashed grey; }\n\t.de-file > .de-file-img > div { display: flex; justify-content: center; align-items: center; height: ").concat(p, "px; cursor: pointer; }\n\t.de-file > .de-file-utils { display: none; height: 18px; margin-top: -20px; padding: 1px 0; background: rgba(64,64,64,.6); position: relative; -moz-box-sizing: initial; box-sizing: initial; }\n\t.de-file > .de-file-utils > .de-file-rarmsg { display: block; position: absolute; bottom: 20px; width: 100%; margin: 0; background: rgba(64,64,64,.6); color: #fff; }\n\t#de-file-area { margin-top: 1px; width: 275px; min-width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; white-space: nowrap; }\n\t.de-file-drag { background: rgba(96,96,96,.8); border: 1px solid grey; opacity: .7; }\n\t.de-file:hover:not(.de-file-drag) > .de-file-utils { display: block !important; }\n\timg.de-file-img, video.de-file-img { max-width: ").concat(p, "px; max-height: ").concat(p, "px; }\n\t.de-file-input { max-width: 300px; }\n\t.de-file-input + .de-file-utils { margin-left: 4px; }\n\t.de-file-off > .de-file-img > div::after { content: \"").concat(Lng.dropFileHere[lang], "\"; display: block; width: 80px; margin: 0 auto; font: 11px arial; opacity: .8; white-space: initial; }\n\t.de-file-rarmsg { margin: 0 2px; vertical-align: 4px; font: bold 11px tahoma; cursor: default; }\n\t.de-file-btn-del, .de-file-btn-rar, .de-file-btn-ren, .de-file-btn-txt { margin: 0 1px; width: 16px; height: 16px; cursor: pointer; }\n\t.de-file-btn-del > svg, .de-file-btn-rar > svg, .de-file-btn-ren > svg, .de-file-btn-txt > svg { width: 16px; height: 16px; }\n\t.de-file-spoil { margin: 0 3px; vertical-align: 1px !important; }\n\t.de-file-txt-add { margin-left: 2px; padding: 0 !important; width: 22px; font-weight: bold; }\n\t.de-file-txt-input { flex-grow: 1; border: 1px solid #9c9c9c; padding: 2px; font: 12px/16px sans-serif; }\n\t.de-file-txt-noedit { background: rgba(255,255,255,.5); cursor: pointer; }\n\t.de-file-txt-wrap { display: inline-flex; width: 100%; }\n\t.de-file-utils { display: inline-flex; align-items: center; float: none; }\n\t.de-file-wrap { display: flex; align-items: center; }\n\t/* 70% of the page, never narrower than 500px, never past the screen: on a narrow screen (a phone) the\n\t   same expression gives the full width, so no media query is needed. The first width is a fallback for\n\t   browsers without min()/max(). */\n\t.de-altform-form {\n\t\twidth: 70%;\n\t\tmax-width: 100%;\n\t\twidth: min(100%, max(500px, 70%));\n\t\tbox-sizing: border-box;\n\t}\n\t.de-altform { width: 100%; border-collapse: collapse; }\n\t.de-altrow { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; margin: 2px 0; }\n\t.de-altcell { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }\n\t.de-altfile { display: inline-flex; align-items: center; }\n\t.de-altform-help { margin-left: 4px; font: bold 16px/16px sans-serif; text-decoration: underline; }\n\t.de-altcell-cap { display: block; }\n\t.de-altcell-wide { flex: 1 1 100%; }\n\t.de-altcell-hints { flex: 1 1 100%; }\n\t.de-altcell-links { display: block; }\n\t.de-altcell-links > * { display: block; margin: 1px 0; }\n\t.de-altcell-hints > p { margin: 1px 0; }\n\t.de-altform-hint { opacity: .7; }\n\t.de-altbreak { flex: 1 1 100%; height: 0; }\n\t.de-altform-open { margin-left: 4px; padding: 1px 6px; border: 1px solid grey; font: bold 12px sans-serif; }\n\t.de-altform-submit { padding: 4px 14px !important; font-size: 130% !important; font-weight: bold; }\n\n\t/* Reply form */\n\t.de-parea { text-align: center; clear: both; }\n\t.de-parea > #de-pform { margin-top: 4px; }\n\t.de-parea-btn-close::after { content: \"").concat(Lng.hideForm[lang], "\"; }\n\t.de-parea-btn-thr::after { content: \"").concat(Lng.makeThr[lang], "\"; }\n\t.de-parea-btn-reply::after { content: \"").concat(Lng.makeReply[lang], "\"; }\n\t#de-pform > form { padding: 0; margin: 0; border: none; }\n\t#de-resizer-text { display: inline-block !important; padding: 5px; margin: 0 0 -2px -10px; border-bottom: 2px solid #666; border-right: 2px solid #666; float: none !important; cursor: se-resize; }\n\t.de-win-inpost { display: inline-block; width: auto; padding: 3px; margin: 2px 0; float: none; clear: left; }\n\t.de-win-inpost > .de-resizer { display: none; }\n\t.de-win-inpost > .de-win-head { background: none; color: inherit; }\n\t#de-win-reply { width: auto !important; min-width: 0; padding: 0 !important; border: none !important; }\n\t#de-win-reply.de-win { position: fixed !important; padding: 0 !important; margin: 0 !important; border-radius: 10px 10px 0 0; }\n\t#de-win-reply.de-win > .de-win-body { padding: 2px 2px 0 1px; border: 1px solid gray; }\n\t#de-win-reply.de-win .de-textarea { min-width: 98% !important; resize: none !important; }\n\t#de-win-reply.de-win #de-resizer-text { display: none !important; }\n\t#de-sagebtn { display: inline-block; margin: 3px 4px 0 4px !important; cursor: pointer; }\n\t.de-textarea { display: inline-block; padding: 3px !important; min-width: 275px !important; min-height: 90px !important; resize: both; transition: none !important; }\n\n\t/* Thread navigation */\n\t#de-thr-navarrow { display: none; position: absolute; top: 50%; left: 34px; transform: translateY(-50%); width: 7px; height: 7px; }\n\t#de-thr-navpanel { color: #F5F5F5; height: 98px; width: 41px; position: fixed; top: 50%; left: 0px; padding: 0; margin: -49px 0 0; background: #777; border: 1px solid #525252; border-left: none; border-radius: 0 5px 5px 0; cursor: pointer; z-index: 1000; }\n\t.de-thr-navpanel-hidden { opacity: .7; margin-left: -34px !important; }\n\t.de-thr-navpanel-hidden > #de-thr-navarrow { display: initial; }\n\t#de-thr-navup { padding: 12px 9px 13px 8px; border-radius: 0 5px 0 0; }\n\t#de-thr-navdown { padding: 13px 9px 12px 8px; border-radius: 0 0 5px 0; }\n\t#de-thr-navup, #de-thr-navdown { width: 41px; height: 49px; -moz-box-sizing: border-box; box-sizing: border-box; }\n\t:not(.de-thr-navpanel-hidden) > #de-thr-navup:hover, :not(.de-thr-navpanel-hidden) > #de-thr-navdown:hover { background: #555; }\n\n\t/* Other */\n\t.de-abtn, a.link-button { text-decoration: none !important; outline: none; }\n\t.de-button { flex: none; padding: 0 ").concat(nav.isFirefox ? 2 : 4, "px !important; margin: 1px 2px; min-width: auto !iportant; height: 24px; font: 13px arial; }\n\t.de-donate-logo { display: inline-block; margin-right: 10px; fill: inherit; color: #F5F5F5; border-radius: 80px 0 0 0; }\n\t.de-donate-logo > svg { width: 130px; height: 130px; }\n\t.de-editor { display: block; width: 600px; height: 300px; max-width: calc(100vw - 20px); font: 12px courier new; tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; }\n\t.de-gotothr-button { vertical-align: 5px; font-size: 0 !important; }\n\t.de-gotothr-button::after { content: \"").concat(Lng.goToThr[lang], "\"; font-size: 14px; }\n\t.de-hidden { float: left; overflow: hidden !important; margin: 0 !important; padding: 0 !important; border: none !important; width: 0 !important; height: 0 !important; display: inline !important; }\n\t.de-input-key { padding: 0 2px !important; margin: 0 !important; font: 13px/15px arial !important; }\n\tinput[type=\"text\"].de-input-selected { background: rgba(255,255,150,0.4) !important }\n\t.de-link-backref { text-decoration: none; }\n\t.de-link-parent { outline: 1px dotted !important; }\n\t.de-link-pview { font-weight: bold; }\n\t.de-list { padding-top: 4px; }\n\t.de-list::before { content: \"\u25CF\"; margin-right: 4px; }\n\t.de-menu { padding: 0 !important; margin: 0 !important; width: auto !important; min-width: 0 !important; z-index: 10002; border: 1px solid grey !important; text-align: left; }\n\t.de-menu-item { display: block; padding: 3px 10px; color: inherit; text-decoration: none; font: 13px arial; white-space: nowrap; cursor: pointer; }\n\t.de-menu-item:hover { background-color: #222; color: #fff; }\n\t.de-omitted { color: grey; }\n\t.de-omitted::before { content: \"").concat(Lng.postsOmitted[lang], "\"; }\n\t.de-page-num { clear: both; }\n\t.de-popup { display: block !important; overflow: visible !important; width: auto !important; min-width: 0pt !important; padding: 8px !important; margin: 1px !important; border: 1px solid grey !important; float: right !important; clear: both !important; white-space: pre-wrap; }\n\t.de-popup-btn { display: inline-block; vertical-align: -1px; color: green; font-size: 1.5em; line-height: 16px; cursor: pointer; }\n\t.de-popup > hr { margin: 0 !important; }\n\t.de-post-hiddencontent { display: none !important; }\n\t.de-pview { position: absolute !important; width: auto; min-width: 0; z-index: 9999; border: 1px solid grey !important; margin: 0 !important; display: block !important; }\n\t.de-pview-info { padding: 3px 6px !important; }\n\t.de-ref-del::after { content: \" (Del)\"; }\n\t.de-ref-op::after { content: \" (OP)\"; }\n\t.de-refcomma:last-child { display: none; }\n\t.de-refmap { margin: 10px 4px 4px 4px; font-size: 75%; font-style: italic; }\n\t.de-refmap::before { content: \"").concat(Lng.replies[lang], " \"; }\n\t.de-replies-hide::after { content: \"").concat(Lng.hidePosts[lang], "\"; }\n\t.de-replies-show::after { content: \"").concat(Lng.showPosts[lang], "\"; }\n\t.de-thr-buttons { clear: left; margin-top: 5px; }\n\t").concat(aib.t ? '.de-thr-buttons > .de-btn-reply { display: none; }' : '', "\n\t.de-thr-collapse-link::after { content: \"").concat(Lng.collapseThr[lang], "\"; }\n\t.de-thr-hid { display: block; padding: 2px; }\n\t.de-thr-updater-link::after { content: \"").concat(Lng.getNewPosts[lang], "\"; }\n\t#de-updater-count::before { content: \": \"; }\n\t.de-viewed { color: #747488 !important; }\n\t.de-wait, .de-fav-wait, .de-fullimg-load { animation: de-wait-anim 1s linear infinite; }\n\t.de-wait { margin: 0 2px -3px 0 !important; width: 16px; height: 16px; }\n\t#de-wrapper-popup { max-width: calc(100vw - (100vw - 100%)); overflow-x: hidden !important; overflow-y: auto !important; -moz-box-sizing: border-box; box-sizing: border-box; max-height: 100vh; position: fixed; right: 0; top: 0; z-index: 9999; font: 14px arial; cursor: default; }\n\t").concat(!aib.dollchan ? ".link-button { display: inline-flex; padding: 4px 8px; margin-left: 4px; background: rgba(40, 40, 160, 0.08); border: 1px solid rgba(120, 120, 120, .5); border-radius: 4px; font: 14px/14px arial; }\n\t\t.link-button:hover { background: rgba(100, 100, 160, 0.20); }\n\t\t.link-button:active { transform: translateY(1px); }" : '', "\n\t@keyframes de-wait-anim { to { transform: rotate(360deg); } }\n\n\t/* Mobile devices */\n\t@media screen and (max-width: 768px) {\n\t\t.de-btn-expthr, .de-btn-fav, .de-btn-fav-sel, .de-btn-hide, .de-btn-hide-user, .de-btn-img, .de-btn-reply, .de-btn-sage, .de-btn-stick, .de-btn-stick-on, .de-btn-unhide, .de-btn-unhide-user, .de-win-btn-clear, .de-win-btn-close, .de-win-btn-toggle { width: 19px; height: 19px; vertical-align: -5px; }\n\t\t.de-video-obj { max-width: calc(100vw - 6px); margin: 5px 0; }\n\t}");
     $css(x).id = 'de-css';
     $css('').id = 'de-css-dynamic';
     $css('').id = 'de-css-user';
