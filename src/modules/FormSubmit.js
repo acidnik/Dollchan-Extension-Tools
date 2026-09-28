@@ -92,10 +92,20 @@ async function checkSubmit(data) {
         // A successful load resolves with null, an unsuccessful one with the error: the check below is about
         // the truthiness of a failure and nothing else.
         const loadPosts = () => Thread.first.loadNewPosts().then(() => null, err => err);
+        // One line per fetch attempt: whether the board's response finally carries our new post
+        const logAttempt = (attempt, err) => {
+            if(!postNum) {
+                return;
+            }
+            console.log(`dE reply: fetch #${ attempt }: post ${ postNum } ${
+                err ? 'load failed: ' + err : pByNum.has(postNum) ? 'found' : 'not found yet' }`);
+        };
         loadPosts().then(async err => {
-            for(let i = 0; !err && postNum && !pByNum.has(postNum) && i < 3; ++i) {
+            logAttempt(1, err);
+            for(let i = 1; !err && postNum && !pByNum.has(postNum) && i <= 3; ++i) {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 err = await loadPosts();
+                logAttempt(i + 1, err);
             }
             infoLoadErrors(err ?? AjaxError.Success);
             if(Cfg.scrAfterRep) {

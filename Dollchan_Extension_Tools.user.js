@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Dollchan Extension Tools
-// @version         24.9.16.29
+// @version         24.9.16.31
 // @namespace       http://www.freedollchan.org/scripts/*
 // @author          Sthephan Shinkufag @ FreeDollChan
 // @copyright       © Dollchan Extension Team. See the LICENSE file for license rights and limitations (MIT).
@@ -8494,8 +8494,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
   var _this24 = this;
   var _marked = _regenerator().m(getFormElements);
-  var version = '24.9.16.29';
-  var commit = '2fa47ad';
+  var version = '24.9.16.31';
+  var commit = '8e47fbe';
 
 
   var doc = deWindow.document;
@@ -18138,7 +18138,7 @@ this.disableSpells();
   }
   function _checkSubmit() {
     _checkSubmit = _asyncToGenerator(_regenerator().m(function _callee57(data) {
-      var error, postNum, isDocument, _aib$captchaAfterSubm, _aib9, _data, _aib$getSubmitData, _postform, tNum, _pByNum$get3, thr, statsParam, dForm, loadPosts;
+      var error, postNum, isDocument, _aib$captchaAfterSubm, _aib9, _data, _aib$getSubmitData, _postform, tNum, _pByNum$get3, thr, statsParam, dForm, loadPosts, logAttempt;
       return _regenerator().w(function (_context65) {
         while (1) switch (_context65.n) {
           case 0:
@@ -18235,6 +18235,12 @@ this.disableSpells();
                 }, function (err) {
                   return err;
                 });
+              }; 
+              logAttempt = function logAttempt(attempt, err) {
+                if (!postNum) {
+                  return;
+                }
+                console.log("dE reply: fetch #".concat(attempt, ": post ").concat(postNum, " ").concat(err ? 'load failed: ' + err : pByNum.has(postNum) ? 'found' : 'not found yet'));
               };
               loadPosts().then(function () {
                 var _ref60 = _asyncToGenerator(_regenerator().m(function _callee56(err) {
@@ -18242,9 +18248,10 @@ this.disableSpells();
                   return _regenerator().w(function (_context64) {
                     while (1) switch (_context64.n) {
                       case 0:
-                        i = 0;
+                        logAttempt(1, err);
+                        i = 1;
                       case 1:
-                        if (!(!err && postNum && !pByNum.has(postNum) && i < 3)) {
+                        if (!(!err && postNum && !pByNum.has(postNum) && i <= 3)) {
                           _context64.n = 5;
                           break;
                         }
@@ -18257,6 +18264,7 @@ this.disableSpells();
                         return loadPosts();
                       case 3:
                         err = _context64.v;
+                        logAttempt(i + 1, err);
                       case 4:
                         ++i;
                         _context64.n = 1;
