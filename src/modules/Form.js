@@ -80,7 +80,6 @@ class PostForm {
         if(Cfg.altLayout) {
             this._applyAltLayout();
         }
-        this.logState('form built');
         if(Cfg.addSageBtn && this.mail) {
             PostForm.hideField(this.mail.closest('label') || this.mail);
             setTimeout(() => this.toggleSage(), 0);
@@ -301,89 +300,6 @@ class PostForm {
         $toggle(this.qArea, isQuick);
         $toggle(this.pForm, !needToHide);
         this.updatePAreaBtns();
-        this.logState(isQuick ? 'under a post' : this.isBottom ? 'bottom of the page' : 'top of the page');
-    }
-    // A one-line state dump for bug reports, off by default: run localStorage.deDebug = 1 in the console once,
-    // and every placement of the reply form prints its settings, layout and measured widths as one JSON line.
-    // Set it to 0 (or delete the key) to switch the log off again.
-    logState(where) {
-        let on;
-        try {
-            const pageFlag = deWindow.localStorage && deWindow.localStorage.deDebug;
-            on = !!(locStorage && locStorage.deDebug || pageFlag);
-        } catch(err) {
-            on = false;
-        }
-        if(!on) {
-            return;
-        }
-        // the placement and the widths settle a frame later, and the form can still be hidden right now
-        setTimeout(() => {
-            const { form, pForm, qArea, name, subj, mail, passw } = this;
-            const width = el => Math.round(el.getBoundingClientRect().width);
-            const field = el => el ? {
-                name   : el.getAttribute('name') || el.type,
-                visible: el.offsetParent !== null,
-                width  : width(el),
-                cell   : (el.closest('.de-altcell')?.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 24)
-            } : null;
-            // Every ancestor of the form with its width and the properties that can widen it: this names the
-            // element that is wider than the form, and why
-            const chain = el => {
-                const arr = [];
-                for(let e = el; e && e !== document.documentElement; e = e.parentElement) {
-                    const cs = getComputedStyle(e);
-                    arr.push(`${ e.tagName.toLowerCase() }${ e.id ? '#' + e.id : '' }${
-                        e.className ? '.' + (e.className + '').trim().split(/\s+/)[0] : '' }=${
-                        Math.round(e.getBoundingClientRect().width) }px ${ cs.display } pad=${
-                        cs.paddingLeft }/${ cs.paddingRight } bg=${ cs.backgroundColor }`);
-                }
-                return arr;
-            };
-            const rowText = row => [...row.querySelectorAll('.de-altcell')]
-                .map(c => (c.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 14)).join(' | ');
-            const state = {
-                where,
-                version    : `${ version } (${ commit })`,
-                env        : nav.scriptHandler,
-                url        : deWindow.location.href.slice(0, 80),
-                windowWidth: deWindow.innerWidth,
-                altBuilt   : !!$q('.de-altform', form),
-                cfg        : {
-                    altLayout  : Cfg.altLayout,
-                    addPostForm: Cfg.addPostForm,
-                    addSageBtn : Cfg.addSageBtn,
-                    noName     : Cfg.noName,
-                    noSubj     : Cfg.noSubj,
-                    noPassword : Cfg.noPassword,
-                    userName   : Cfg.userName,
-                    insertNum  : Cfg.insertNum,
-                    showRepBtn : Cfg.showRepBtn,
-                    txtBtnsLoc : Cfg.txtBtnsLoc,
-                    addTextBtns: Cfg.addTextBtns,
-                    textaWidth : Cfg.textaWidth,
-                    textaHeight: Cfg.textaHeight
-                },
-                form: form ? {
-                    visible : form.offsetParent !== null,
-                    width   : width(form),
-                    minWidth: getComputedStyle(form).minWidth,
-                    table   : width(form.querySelector('table')),
-                    textarea: width(form.querySelector('textarea'))
-                } : null,
-                container: pForm ? width(pForm) : null,
-                replyBox : qArea ? {
-                    cls    : qArea.className,
-                    visible: qArea.offsetParent !== null,
-                    width  : width(qArea)
-                } : null,
-                chain: form ? chain(form) : null,
-                rows : form ? [...form.querySelectorAll('.de-altrow')]
-                    .map((row, i) => `${ i }: ${ rowText(row) }`) : null,
-                fields: { name: field(name), subject: field(subj), mail: field(mail), password: field(passw) }
-            };
-            console.log('dE form: ' + JSON.stringify(state));
-        }, 150);
     }
     showMainReply(isBottom, e) {
         this.closeReply();
